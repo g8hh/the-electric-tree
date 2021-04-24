@@ -3,7 +3,7 @@ addLayer("m", {
     symbol: "M", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 0, // Row the layer is in on the tree (0 is the first row)
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
-    color: "#85bb65",
+    color: "#426432",
     hotkeys: [
         {key: "u", description: "Press U to buy all upgrades of the layer you're in", onPress(){buyAll(player.tab)}},
         {key: "r", description: "Press R to bulk buy all buyables of the layer you're in", onPress(){buyAllBuyables(player.tab)}},
@@ -316,12 +316,6 @@ addLayer("m", {
             description: "Reduce the solar power plant cost exponent by 0.005",
             cost() { return new Decimal("1e5500000000") },
             unlocked() { return hasUpgrade("g", 14) || hasUpgrade("m", 64) },
-        },
-        65: {
-            title: "Endgame",
-            description: "Endgame",
-            cost() { return new Decimal("1e6000000000") },
-            unlocked() { return getBuyableAmount("s", 11).gte(9) || hasUpgrade("m", 65) },
         },
     },
     buyables: {
@@ -1298,7 +1292,7 @@ addLayer("n", {
     symbol: "N", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 2, // Row the layer is in on the tree (0 is the first row)
     position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
-    color: "#adff2f",
+    color: "#2cfa1f",
 	branches: ["b", "w"],
     hotkeys: [
         {key: "n", description: "Press N to Nuclear Power Plant Reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
@@ -2029,7 +2023,7 @@ addLayer("g", {
     color: "#0000ff",
     layerShown(){return hasUpgrade("m", 64) || player.g.unlocked},
     startData() { return {
-        unlocked: true,
+        unlocked: false,
         points: new Decimal(0),
         best: new Decimal(0),
         total: new Decimal(0),
@@ -2051,6 +2045,7 @@ addLayer("g", {
         if(hasUpgrade("c", 24)) mult = mult.times(tmp.c.upgrades[24].effect)
         if(hasUpgrade("i", 12)) mult = mult.times(tmp.i.upgrades[12].effect)
         if(hasUpgrade("i", 13)) mult = mult.times(tmp.i.upgrades[13].effect)
+        if(hasUpgrade("i", 31)) mult = mult.times(tmp.i.upgrades[31].effect)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -2112,6 +2107,12 @@ addLayer("g", {
             cost() { return new Decimal("1e20") },
             unlocked() { return hasUpgrade("i", 21) || hasUpgrade("g", 14) },
         },
+        15: {
+            title: "( Softcapped ) The Sequel",
+            description: "Make the softcap on inflation gain 250x less powerful",
+            cost() { return new Decimal("1e83") },
+            unlocked() { return hasUpgrade("i", 31) || hasUpgrade("g", 15) },
+        },
     },
 })
 addLayer("i", {
@@ -2156,10 +2157,17 @@ addLayer("i", {
 		eff = new Decimal(1)
         eff = eff.times(player.m.points.add(1).log10().add(1).log10().div(100))
         if(hasUpgrade("i", 11)) eff = eff.times(tmp.i.upgrades[11].effect)
+        if(hasUpgrade("i", 25)) eff = eff.times(tmp.i.upgrades[25].effect)
         if(hasUpgrade("g", 13)) eff = eff.add(1).pow(tmp.g.upgrades[13].effect).minus(1)
+        if(hasUpgrade("i", 32)) eff = eff.pow(2500)
+        if(eff.gte("ee25") && !hasUpgrade("i", 32)) {
+            if(hasUpgrade("g", 15)) eff = eff.times(new Decimal("ee25").pow(3)).pow(0.25)
+            else eff = eff.times(new Decimal("ee25").pow(999)).pow(0.001)
+        }
         return eff
 	},
 	effectDescription() {
+        if(tmp.i.effect.gte("ee25") && !hasUpgrade("i", 32)) return "And Your Money Is Adding "+format(tmp.i.effect.times(100))+"% To that Amount Every Second ( Softcapped )"
         return "And Your Money Is Adding "+format(tmp.i.effect.times(100))+"% To that Amount Every Second"
 	},
     doReset(resettingLayer){
@@ -2235,6 +2243,8 @@ addLayer("i", {
             unlocked() { return hasUpgrade("i", 15) || hasUpgrade("i", 21) },
             effect() { 
                 eff = new Decimal(player.i.points.slog())
+                if(hasUpgrade("i", 23)) eff = eff.pow(tmp.i.upgrades[23].effect)
+                if(hasUpgrade("i", 24)) eff = eff.pow(tmp.i.upgrades[24].effect)
 				return eff
             },
             effectDisplay() { return "*"+format(tmp.i.upgrades[21].effect) + " to all upgrades effects in the row above" },
@@ -2244,6 +2254,64 @@ addLayer("i", {
             description: "Raise electricity gain to the 1.001 th power",
             cost() { return new Decimal("1e10000") },
             unlocked() { return player.i.points.gte("1e5000") || hasUpgrade("i", 22) },
+        },
+        23: {
+            title: "Zimbabwe",
+            description: "Boost Inflated++ based on money",
+            cost() { return new Decimal("1e15000") },
+            unlocked() { return player.i.points.gte("1e10000") || hasUpgrade("i", 23) },
+            effect() { 
+                eff = new Decimal(player.m.points.add(1).log10().pow(1/25))
+                if(hasUpgrade("i", 24)) eff = eff.pow(tmp.i.upgrades[24].effect)
+				return eff
+            },
+            effectDisplay() { return "^"+format(tmp.i.upgrades[23].effect) + " to Inflated++" },
+        },
+        24: {
+            title: "Germany",
+            description: "Boost Inflated++ and Zimbabwe based on money",
+            cost() { return new Decimal("1e25000") },
+            unlocked() { return player.i.points.gte("1e20000") || hasUpgrade("i", 24) },
+            effect() { 
+                eff = new Decimal(player.m.points.add(1).log10().pow(1/50))
+				return eff
+            },
+            effectDisplay() { return "^"+format(tmp.i.upgrades[24].effect) + " to Inflated++ and Zimbabwe" },
+        },
+        25: {
+            title: "Hyperinflation",
+            description: "Inflation boosts infation again",
+            cost() { return new Decimal("1e5000000") },
+            unlocked() { return player.i.points.gte("1e100000") || hasUpgrade("i", 25) },
+            effect() { 
+                if(hasUpgrade("i", 33)) eff = new Decimal(10).pow(player.i.points.log10().pow(1.5))
+                else eff = new Decimal(10).pow(player.i.points.log10().pow(0.95))
+				return eff
+            },
+            effectDisplay() { return "*"+format(tmp.i.upgrades[25].effect) + " to inflation gain" },
+        },
+        31: {
+            title: "Hyperinflated Boost",
+            description: "Inflation boosts corrupt governments again",
+            cost() { return new Decimal("ee27") },
+            unlocked() { return player.i.points.gte("ee25") || hasUpgrade("i", 31) },
+            effect() { 
+                eff = new Decimal(player.i.points.log10().add(1).log10().add(1).pow(30).min("e100"))
+				return eff
+            },
+            effectDisplay() { return "*"+format(tmp.i.upgrades[31].effect) + " to corrupt government gain" },
+        },
+        32: {
+            title: "Annilihate The Softcaps",
+            description: "Remove the useless softcap on inflation gain and raise inflation gain to the 2500th power",
+            cost() { return new Decimal("ee30") },
+            unlocked() { return player.i.points.gte("ee28") || hasUpgrade("i", 32) },
+        },
+        33: {
+            title: "I n f l a t e",
+            description: "Make the Hyperinflation formula better and enter the i n f l a t e d era",
+            cost() { return new Decimal("ee100") },
+            unlocked() { return player.i.points.gte("ee75") || hasUpgrade("i", 33) },
         },
     },
 })

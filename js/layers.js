@@ -2077,7 +2077,7 @@ addLayer("g", {
             cost() { return new Decimal(100) },
             unlocked() { return player.g.points.gte(0) || hasUpgrade("g", 11) },
             effect() { 
-				return new Decimal(player.g.points.pow(0.125).min(2))
+				return new Decimal(player.g.points.add(1).pow(0.125).min(2))
             },
             effectDisplay() { return "/"+format(tmp.g.upgrades[11].effect) + " to solar power plant cost" },
         },

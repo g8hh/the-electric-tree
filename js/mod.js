@@ -11,11 +11,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.10",
-	name: "Sun"
+	num: "0.12",
+	name: "Zibabwean Hyperinflation"
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+    <br><h3>v0.12 : Zimbabwean Hyperinflation ( April 24th )</h3><br>
+    <br><h3>v0.11 : Inflated ( April 23rd )</h3><br>
     <br><h3>v0.10 : Sun ( April 22nd )</h3><br>
     <br><h3>v0.9 : Corrupted Save ( I hope not ) ( April 7th )</h3><br>
     <br><h3>v0.8 : Corruption ( April 6th )</h3><br>

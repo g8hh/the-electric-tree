@@ -394,7 +394,7 @@ function gameLoop(diff) {
 	}
 	addTime(diff)
 	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
-	if(hasUpgrade("s", 15) || player.i.points.gt(1)) player.i.points = player.i.points.times(tmp.i.effect.add(1).pow(diff))
+	if(hasUpgrade("s", 15) || player.i.points.gt(1)) addPoints("i", player.i.points.times(tmp.i.effect.add(1).pow(diff).minus(1)))
 	if(hasUpgrade("i", 13)) player.p.points = player.p.points.times(new Decimal(0.99).pow(diff))
 
 	for (x = 0; x <= maxRow; x++){

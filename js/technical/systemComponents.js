@@ -156,7 +156,7 @@ var systemComponents = {
             </tr>
                 <tr>
                     <td><button class="opt" onclick="toggleOpt('hideChallenges')">Completed Challenges: {{ player.hideChallenges?"HIDDEN":"SHOWN" }}</button></td>
-                    <td><button class="opt" onclick="toggleEasyChallenges()">Toggle Easy Challenge Mode : {{ easyChallenges?"ON":"OFF" }}</button></td>
+                    <td><button class="opt" onclick="toggleBuyMaxLayer()">Show A Layer With Buttons To Buy Max For Mobile Players : {{ player.bm.unlocked?"ON":"OFF" }}</button></td>
 					<!--	<td><button class="opt" onclick="toggleOpt('oldStyle')">Style: {{ player.oldStyle?"v1.0":"NEW" }}</button></td>-->
             </tr> 
         </table>`

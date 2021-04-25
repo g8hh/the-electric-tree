@@ -266,40 +266,19 @@ function resetRow(row) {
 }
 
 function startChallenge(layer, x) {
-	if(layer == "n") {
-		keep = []
-		if(x == 21) {
-			player.n.resetTime = 0
-			keep.push("milestones")
+	if(layer == "n" || layer == "s") {
+		if(layer == "s" && x == 12) {
+			setBuyableAmount("p", 11, new Decimal(0))
+			setBuyableAmount("p", 12, new Decimal(0))
+			setBuyableAmount("p", 13, new Decimal(0))
+			setBuyableAmount("p", 21, new Decimal(0))
+			setBuyableAmount("p", 22, new Decimal(0))
+			setBuyableAmount("p", 23, new Decimal(0))
 		}
-		layerDataReset("c", keep)
 		layerDataReset("w")
 		layerDataReset("b")
 		layerDataReset("m")
 		player.points = new Decimal(0)
-		if(easyChallenges) {
-			player.c.milestones = ["0", "1", "2", "3"]
-			player.w.milestones = ["0", "1"]
-			player.b.milestones = ["0", "1", "2"]
-		}
-	}
-	if(layer == "s") {
-		layerDataReset("n")
-		layerDataReset("c")
-		layerDataReset("w")
-		layerDataReset("b")
-		layerDataReset("m")
-		player.points = new Decimal(0)
-		if(x == 12) {
-			layerDataReset("p")
-			layerDataReset("g")
-		}
-		if(easyChallenges) {
-			player.n.milestones = ["0", "1"]
-			player.c.milestones = ["0", "1", "2", "3"]
-			player.w.milestones = ["0", "1"]
-			player.b.milestones = ["0", "1", "2"]
-		}
 	}
 	let enter = false
 	if (!player[layer].unlocked) return
@@ -345,16 +324,6 @@ function completeChallenge(layer, x) {
 	if (!x) return
 	if (! canCompleteChallenge(layer, x)){
 		player[layer].activeChallenge = null
-		if(layer == "n") {
-			player.c.best = new Decimal(10).max(player.c.best)
-		}
-		if(layer == "s") {
-			player.c.best = new Decimal(10).max(player.c.best)
-			player.n.best = new Decimal(10).max(player.n.best)
-			if(x == 12) {
-				player.c.upgrades = ["24"]
-			}
-		}
 		return
 	}
 	if (player[layer].challenges[x] < tmp[layer].challenges[x].completionLimit) {
@@ -478,9 +447,9 @@ var interval = setInterval(function() {
 
 setInterval(function() {needCanvasUpdate = true}, 500)
 
-function toggleEasyChallenges() {
-	if(easyChallenges) easyChallenges = false
-	else easyChallenges = true
+function toggleBuyMaxLayer() {
+	if(player.bm.unlocked) player.bm.unlocked = false
+	else player.bm.unlocked = true
 }
 
 function buyAll(layer) {

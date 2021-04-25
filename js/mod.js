@@ -11,11 +11,12 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.12",
-	name: "Zibabwean Hyperinflation"
+	num: "0.13",
+	name: "Easier Game"
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+    <br><h3>v0.13 : Easier Game ( April 25th )</h3><br>
     <br><h3>v0.12 : Zimbabwean Hyperinflation ( April 24th )</h3><br>
     <br><h3>v0.11 : Inflated ( April 23rd )</h3><br>
     <br><h3>v0.10 : Sun ( April 22nd )</h3><br>
@@ -79,7 +80,10 @@ function getPointGen() {
 		gain = gain.div(new Decimal(1000000).pow(player.c.upgrades.length))
 	}
 	if(inChallenge("n", 21)) {
-		gain = gain.div(new Decimal(10).pow(100).pow(player.n.resetTime/1000))
+		gain = gain.div(new Decimal(10).pow(100).pow(player.n.resetTime))
+	}
+	if(inChallenge("s", 11)) {
+		gain = gain.pow(15)
 	}
 	if(inChallenge("s", 12)) {
 		if(getBuyableAmount("p", 11).eq(1)) gain = gain.pow(1.25)
@@ -100,7 +104,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return hasUpgrade("i", 33)
+	return hasUpgrade("m", 65)
 }
 
 

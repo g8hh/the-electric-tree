@@ -28,7 +28,7 @@ addLayer("m", {
 		exp = new Decimal(1)
 		if(inChallenge("w", 11)) {exp = exp.div(2)}
         if(inChallenge("s", 12)) {
-            if(getBuyableAmount("p", 21).eq(1)) exp = exp.div(1.35)
+            if(getBuyableAmount("p", 21).eq(1)) exp = exp.div(1.30)
         }
 		return exp
 	},
@@ -301,7 +301,7 @@ addLayer("m", {
         62: {
             title: "Corrupt Batteries",
             description: "Pay corrupt poiticians to reduce the first battery buyable cost scaling",
-            cost() { return new Decimal("1e9111000") },
+            cost() { return new Decimal("1e9135000") },
             unlocked() { return getBuyableAmount("s", 11).gte(3) || hasUpgrade("m", 62) },
         },
         63: {
@@ -1173,7 +1173,7 @@ addLayer("c", {
         return exp
     },
 	effect() {
-        if(inChallenge("s", 11)) {
+        if(inChallenge("s", 11) || inChallenge("s", 12)) {
             return new Decimal(1)
         }
 		eff = new Decimal(10)
@@ -1340,7 +1340,7 @@ addLayer("n", {
         return exp
     },
 	effect() {
-        if(inChallenge("s", 11)) {
+        if(inChallenge("s", 11) || inChallenge("s", 12)) {
             return new Decimal(1)
         }
 		eff = new Decimal(1000)
@@ -1499,53 +1499,37 @@ addLayer("n", {
 		cols:2,
 		11: {
 			name: "Expensive Upgrades",
-			challengeDescription: "Buying an upgrade divides global electricity production, and reduces their layer's production as well<br>WARNING : Entering this challenge resets ALL previous layers",
-			goalDescription: "4 coal power plants",
+			challengeDescription: "Buying an upgrade divides global electricity production, and reduces their layer's production as well",
+			goalDescription: "1e5780 workers",
 			rewardDescription: "Nuclear power plant effect also applies to battery cost and unlock a third money buyable as well as another challenge",
 			unlocked() { return hasUpgrade("n", 12) || inChallenge("n", 11) || hasChallenge("n", 11) },
-			canComplete() { return player.c.points.gte(4)},
-            onComplete() {
-                player.c.best = new Decimal(10).max(player.c.best)
-                player.c.points = new Decimal(4)
-            }
+			canComplete() { return player.w.points.gte("1e5780")},
 		},
         12: {
 			name: "Worthless Buyables",
-			challengeDescription: "Buyables have no effect<br>WARNING : Entering this challenge resets ALL previous layers",
+			challengeDescription: "Buyables have no effect",
 			goalDescription: "1e11850 workers",
 			rewardDescription: "Unlock a row of money upgrades",
 			unlocked() { return hasChallenge("n", 11) || inChallenge("n", 12) || hasChallenge("n", 12) },
 			canComplete() { return player.w.points.gte("1e11850")},
-            onComplete() {
-                player.c.best = new Decimal(15).max(player.c.best)
-                player.c.points = new Decimal(15)
-            }
 		},
         21: {
 			name: "Gotta Go Fast",
-			challengeDescription: "Electricity gain drops over time until the challenge is completed<br>WARNING : Entering this challenge resets ALL previous layers",
-			goalDescription: "1e5000 workers",
+			challengeDescription: "Electricity gain drops over time until the challenge is completed",
+			goalDescription: "1e8300 workers",
 			rewardDescription: "Unlock a multiplier to electricity gain that grows over time",
 			unlocked() { return hasUpgrade("c", 21) || inChallenge("n", 21) || hasChallenge("n", 21) },
-			canComplete() { return player.w.points.gte("1e5000")},
-            onComplete() {
-                player.c.best = new Decimal(17).max(player.c.best)
-                player.c.points = new Decimal(17)
-            },
-			rewardEffect() { return new Decimal(player.n.resetTime).pow(10000) },
+			canComplete() { return player.w.points.gte("1e8300")},
+			rewardEffect() { return new Decimal(player.n.resetTime).pow(15000).min("e50000") },
 			rewardDisplay() { return "Boost Electricty Gain By "+format(tmp.n.challenges[21].rewardEffect)+"x"}
 		},
         22: {
 			name: "Anti-Corruption Politics",
-			challengeDescription: "Corruption effect is reduced by 1<br>WARNING : Entering this challenge resets ALL previous layers",
-			goalDescription: "1e985000 KWh",
+			challengeDescription: "Corruption effect is reduced by 1",
+			goalDescription: "1e1130000 KWh",
 			rewardDescription: "Multiply corrupt politician gain based on nuclear power plants",
 			unlocked() { return hasUpgrade("p", 21) || inChallenge("n", 22) || hasChallenge("n", 22) },
-			canComplete() { return player.points.gte("1e985000")},
-            onComplete() {
-                player.c.best = new Decimal(29).max(player.c.best)
-                player.c.points = new Decimal(29)
-            },
+			canComplete() { return player.points.gte("1e1130000")},
 			rewardEffect() { return new Decimal(player.n.points).add(1).pow(2/3) },
 			rewardDisplay() { return "Boost Corrupt Politician Gain By "+format(tmp.n.challenges[22].rewardEffect)+"x"}
 		},
@@ -1607,7 +1591,7 @@ addLayer("s", {
         return exp
     },
 	effect() {
-        if(inChallenge("s", 12)) {
+        if(inChallenge("s", 11) || inChallenge("s", 12)) {
             return new Decimal(1)
         }
 		eff = new Decimal(10)
@@ -1692,46 +1676,45 @@ addLayer("s", {
 		cols:2,
 		11: {
 			name: "No Effects",
-			challengeDescription: "All previous layers effects are 1, but electricity gain is raised to the 15th power<br>WARNING : Entering this challenge resets ALL previous layers",
-			goalDescription: "35 coal power plants and 15 nuclear power plants",
+			challengeDescription: "All layers effects are 1, but electricity gain is raised to the 15th power<br>WARNING : Entering this challenge resets ALL previous layers",
+			goalDescription: "e950000 KWh",
 			rewardDescription: "Reduce solar power plant cost exponent by 0.01",
 			unlocked() { return hasUpgrade("p", 31) || inChallenge("s", 11) || hasChallenge("s", 11) },
-			canComplete() { return player.c.points.gte(35) && player.n.points.gte(15) },
-            onComplete() {
-                player.c.best = new Decimal(10).max(player.c.best)
-                player.n.best = new Decimal(10).max(player.n.best)
-            }
+			canComplete() { return player.points.gte("e950000")},
 		},
         12: {
 			name: "Satan's Masterpiece",
-			challengeDescription() {return "The solar power plant effect doesn't work anymore, and choose between 3 buffs and nerfs in the corrupt politician layer<br>WARNING : Entering this challenge resets ALL previous layers<br>Challenge completions : "+challengeCompletions("s", 12)+"/5"},
+			challengeDescription() {return "The row 3 effects and side layers effects don't work anymore, and choose between 3 buffs and nerfs in the corrupt politician layer<br>Challenge completions : "+challengeCompletions("s", 12)+"/9"},
 			goalDescription() {
-                if(challengeCompletions("s", 12) == 0) return "e4860000 KWh"
-                if(challengeCompletions("s", 12) == 1) return "e303400 KWh with another combinaison than 1-2"
-                if(challengeCompletions("s", 12) == 2) return "e267000 KWh with another combinaison than 1-2 or 2-2"
-                if(challengeCompletions("s", 12) == 3) return "e213975 KWh with another combinaison than 1-2 or 1-3 or 2-2"
-                if(challengeCompletions("s", 12) == 4) return "e14700 KWh with another combinaison than 1-2 or 1-3 or 2-2 or 3-3"
-                if(challengeCompletions("s", 12) == 5) return "F1.78e308 KWh"
+                if(challengeCompletions("s", 12) == 0) return "Max electricity"
+                if(challengeCompletions("s", 12) == 1) return "Max electricity with another combinaison than 1-2"
+                if(challengeCompletions("s", 12) == 2) return "Max electricity with another combinaison than 1-1 or 1-2"
+                if(challengeCompletions("s", 12) == 3) return "Max electricity with another combinaison than 1-1 or 1-2 or 1-3"
+                if(challengeCompletions("s", 12) == 4) return "Max electricity with another combinaison than 1-1 or 1-2 or 1-3 or 3-2"
+                if(challengeCompletions("s", 12) == 5) return "Max electricity with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 3-2"
+                if(challengeCompletions("s", 12) == 6) return "Max electricity with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 2-3 or 3-2"
+                if(challengeCompletions("s", 12) == 7) return "Max electricity with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 2-3 or 3-2 or 3-3"
+                if(challengeCompletions("s", 12) == 8) return "Max electricity with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 2-3 or 3-1 or 3-2 or 3-3"
+                if(challengeCompletions("s", 12) == 9) return "Max electricity"
             },
 			rewardDescription() {
-                if(challengeCompletions("s", 12) == 5) return "Raise electricity gain to the 1.05 th power"
-                return "You need "+(5-challengeCompletions("s", 12))+" more completions to unlock the reward"
+                if(challengeCompletions("s", 12) == 9) return "Raise electricity gain to the 1.05 th power"
+                return "You need "+(9-challengeCompletions("s", 12))+" more completions to unlock the reward"
             },
 			unlocked() { return hasUpgrade("c", 24) || inChallenge("s", 12) || hasChallenge("s", 12) },
-            completionLimit: 5,
+            completionLimit: 9,
 			canComplete() { 
-                if(challengeCompletions("s", 12) == 0) return player.points.gte("e4860000") && getBuyableAmount("p", 11).add(getBuyableAmount("p", 22)).eq(2)
-                if(challengeCompletions("s", 12) == 1) return player.points.gte("e303400") && getBuyableAmount("p", 12).add(getBuyableAmount("p", 22)).eq(2)
-                if(challengeCompletions("s", 12) == 2) return player.points.gte("e267000") && getBuyableAmount("p", 11).add(getBuyableAmount("p", 23)).eq(2)
-                if(challengeCompletions("s", 12) == 3) return player.points.gte("e213975") && getBuyableAmount("p", 13).add(getBuyableAmount("p", 23)).eq(2)
-                if(challengeCompletions("s", 12) == 4) return player.points.gte("e14700") && getBuyableAmount("p", 12).add(getBuyableAmount("p", 23)).eq(2)
-                if(challengeCompletions("s", 12) == 5) return player.points.gte(new Decimal(10).tetrate("1.78e308")) 
+                if(challengeCompletions("s", 12) == 0) return getPointGen().gte("e255294") && getBuyableAmount("p", 11).add(getBuyableAmount("p", 22)).eq(2)
+                if(challengeCompletions("s", 12) == 1) return getPointGen().gte("e253762") && getBuyableAmount("p", 11).add(getBuyableAmount("p", 21)).eq(2)
+                if(challengeCompletions("s", 12) == 2) return getPointGen().gte("e253546") && getBuyableAmount("p", 11).add(getBuyableAmount("p", 23)).eq(2)
+                if(challengeCompletions("s", 12) == 3) return getPointGen().gte("e203503") && getBuyableAmount("p", 13).add(getBuyableAmount("p", 22)).eq(2)
+                if(challengeCompletions("s", 12) == 4) return getPointGen().gte("e203181") && getBuyableAmount("p", 12).add(getBuyableAmount("p", 22)).eq(2)
+                if(challengeCompletions("s", 12) == 5) return getPointGen().gte("e202062") && getBuyableAmount("p", 12).add(getBuyableAmount("p", 23)).eq(2)
+                if(challengeCompletions("s", 12) == 6) return getPointGen().gte("e202061") && getBuyableAmount("p", 13).add(getBuyableAmount("p", 23)).eq(2)
+                if(challengeCompletions("s", 12) == 7) return getPointGen().gte("e87258") && getBuyableAmount("p", 13).add(getBuyableAmount("p", 21)).eq(2)
+                if(challengeCompletions("s", 12) == 8) return getPointGen().gte("e87252") && getBuyableAmount("p", 12).add(getBuyableAmount("p", 21)).eq(2)
+                if(challengeCompletions("s", 12) == 9) return getPointGen().gte(new Decimal(10).tetrate("1.78e308")) 
             },
-            onComplete() {
-                player.c.best = new Decimal(10).max(player.c.best)
-                player.n.best = new Decimal(10).max(player.n.best)
-                player.c.upgrades = ["24"]
-            }
 		},
 	},
 	milestones: {
@@ -1789,7 +1772,7 @@ addLayer("p", {
         return exp
     },
 	effect() {
-        if(inChallenge("s", 11)) {
+        if(inChallenge("s", 11) || inChallenge("s", 12)) {
             return new Decimal(1)
         }
 		eff = new Decimal(1)
@@ -1842,7 +1825,7 @@ addLayer("p", {
             cost() { return new Decimal(100) },
             unlocked() { return player.p.points.gte(0) || hasUpgrade("p", 11) },
             effect() { 
-				return new Decimal(player.p.points.add(1).log10().add(1).log10().pow(1/3))
+				return new Decimal(player.p.points.add(1).log10().add(1).log10().pow(1/3).min(2))
             },
             effectDisplay() { return "-"+format(tmp.p.upgrades[11].effect) + " to coal power plant cost exponent" },
         },
@@ -1852,7 +1835,7 @@ addLayer("p", {
             cost() { return new Decimal(150) },
             unlocked() { return hasUpgrade("p", 11) || hasUpgrade("p", 12) },
             effect() { 
-				return new Decimal(player.p.points.add(1).log10().add(1).log10().pow(1/3).times(1.5))
+				return new Decimal(player.p.points.add(1).log10().add(1).log10().pow(1/3).times(1.5).min(2))
             },
             effectDisplay() { return "-"+format(tmp.p.upgrades[12].effect) + " to nuclear power plant cost exponent" },
         },
@@ -1972,7 +1955,7 @@ addLayer("p", {
         21: {
             title: "Corrupt Nerf 1",
             display() {
-                return "Divide by 1.35 the money gain exponent"
+                return "Divide by 1.30 the money gain exponent"
             },
             unlocked() { return inChallenge("s", 12) && getBuyableAmount("p", 22).add(getBuyableAmount("p", 23)).lt(1) },
             canAfford() { 
@@ -2053,7 +2036,7 @@ addLayer("g", {
         return exp
     },
 	effect() {
-        if(inChallenge("s", 11)) {
+        if(inChallenge("s", 11) || inChallenge("s", 12)) {
             return new Decimal(1)
         }
 		eff = new Decimal(1)
@@ -2077,7 +2060,7 @@ addLayer("g", {
             cost() { return new Decimal(100) },
             unlocked() { return player.g.points.gte(0) || hasUpgrade("g", 11) },
             effect() { 
-				return new Decimal(player.g.points.add(1).pow(0.125).min(2))
+				return new Decimal(player.g.points.pow(0.125).min(2))
             },
             effectDisplay() { return "/"+format(tmp.g.upgrades[11].effect) + " to solar power plant cost" },
         },
@@ -2312,6 +2295,103 @@ addLayer("i", {
             description: "Make the Hyperinflation formula better and enter the i n f l a t e d era",
             cost() { return new Decimal("ee100") },
             unlocked() { return player.i.points.gte("ee75") || hasUpgrade("i", 33) },
+        },
+    },
+})
+addLayer("bm", {
+    tabFormat: [
+        "clickables",
+    ],
+    symbol: "BM", // This appears on the layer's node. Default is the id with the first letter capitalized
+    row: "side", // Row the layer is in on the tree (0 is the first row)
+    position: -1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    color: "#0000ff",
+    layerShown(){return player.bm.unlocked},
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+    }},
+    baseAmount() {return player.points}, // Get the current amount of baseResource
+    clickables: {
+        rows: 9,
+        cols: 2,
+        11: {
+            display: "Buy All Money Upgrades",
+            unlocked() {return true},
+            canClick() {return true},
+            onClick() {buyAll("m")},
+        },
+        12: {
+            display: "Bulk Buy All Money Buyables",
+            unlocked() {return true},
+            canClick() {return true},
+            onClick() {buyAllBuyables("m")},
+        },
+        21: {
+            display: "Buy All Battery Upgrades",
+            unlocked() {return true},
+            canClick() {return true},
+            onClick() {buyAll("b")},
+        },
+        22: {
+            display: "Bulk Buy All Battery Buyables",
+            unlocked() {return true},
+            canClick() {return true},
+            onClick() {buyAllBuyables("b")},
+        },
+        31: {
+            display: "Buy All Workers Upgrades",
+            unlocked() {return true},
+            canClick() {return true},
+            onClick() {buyAll("w")},
+        },
+        41: {
+            display: "Buy All Coal Upgrades",
+            unlocked() {return true},
+            canClick() {return true},
+            onClick() {buyAll("c")},
+        },
+        51: {
+            display: "Buy All Nuclear Upgrades",
+            unlocked() {return true},
+            canClick() {return true},
+            onClick() {buyAll("n")},
+        },
+        52: {
+            display: "Bulk Buy All Nuclear Buyables",
+            unlocked() {return true},
+            canClick() {return true},
+            onClick() {buyAllBuyables("n")},
+        },
+        61: {
+            display: "Buy All Solar Upgrades",
+            unlocked() {return true},
+            canClick() {return true},
+            onClick() {buyAll("s")},
+        },
+        62: {
+            display: "Bulk Buy All Solar Buyables",
+            unlocked() {return true},
+            canClick() {return true},
+            onClick() {buyAllBuyables("s")},
+        },
+        71: {
+            display: "Buy All Politicians Upgrades",
+            unlocked() {return true},
+            canClick() {return true},
+            onClick() {buyAll("p")},
+        },
+        81: {
+            display: "Buy All Governments Upgrades",
+            unlocked() {return true},
+            canClick() {return true},
+            onClick() {buyAll("g")},
+        },
+        91: {
+            display: "Buy All Inflation Upgrades",
+            unlocked() {return true},
+            canClick() {return true},
+            onClick() {buyAll("i")},
         },
     },
 })

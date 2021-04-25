@@ -1500,10 +1500,10 @@ addLayer("n", {
 		11: {
 			name: "Expensive Upgrades",
 			challengeDescription: "Buying an upgrade divides global electricity production, and reduces their layer's production as well",
-			goalDescription: "1e5780 workers",
+			goalDescription: "1e5760 workers",
 			rewardDescription: "Nuclear power plant effect also applies to battery cost and unlock a third money buyable as well as another challenge",
 			unlocked() { return hasUpgrade("n", 12) || inChallenge("n", 11) || hasChallenge("n", 11) },
-			canComplete() { return player.w.points.gte("1e5780")},
+			canComplete() { return player.w.points.gte("1e5760")},
 		},
         12: {
 			name: "Worthless Buyables",

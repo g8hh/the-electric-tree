@@ -1676,7 +1676,7 @@ addLayer("s", {
 		cols:2,
 		11: {
 			name: "No Effects",
-			challengeDescription: "All layers effects are 1, but electricity gain is raised to the 15th power<br>WARNING : Entering this challenge resets ALL previous layers",
+			challengeDescription: "All layers effects are 1, but electricity gain is raised to the 15th power",
 			goalDescription: "e950000 KWh",
 			rewardDescription: "Reduce solar power plant cost exponent by 0.01",
 			unlocked() { return hasUpgrade("p", 31) || inChallenge("s", 11) || hasChallenge("s", 11) },
@@ -1684,7 +1684,7 @@ addLayer("s", {
 		},
         12: {
 			name: "Satan's Masterpiece",
-			challengeDescription() {return "The row 3 effects and side layers effects don't work anymore, and choose between 3 buffs and nerfs in the corrupt politician layer<br>Challenge completions : "+challengeCompletions("s", 12)+"/9"},
+			challengeDescription() {return "The row 3 effects and side layers effects don't work anymore, and choose between 3 buffs and nerfs in the corrupt politician layer<br>Don't enter the challenge if 3rd nuclear challenge reward is not capped at e50000<br>Challenge completions : "+challengeCompletions("s", 12)+"/9"},
 			goalDescription() {
                 if(challengeCompletions("s", 12) == 0) return "e255294 KWh/s"
                 if(challengeCompletions("s", 12) == 1) return "e253762 KWh/s with another combinaison than 1-2"

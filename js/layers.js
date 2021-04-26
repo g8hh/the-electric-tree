@@ -1520,7 +1520,7 @@ addLayer("n", {
 			rewardDescription: "Unlock a multiplier to electricity gain that grows over time",
 			unlocked() { return hasUpgrade("c", 21) || inChallenge("n", 21) || hasChallenge("n", 21) },
 			canComplete() { return player.w.points.gte("1e8300")},
-			rewardEffect() { return new Decimal(player.n.resetTime).pow(15000).min("e50000") },
+			rewardEffect() { return new Decimal(player.n.resetTime).pow(25000).min("e50000") },
 			rewardDisplay() { return "Boost Electricty Gain By "+format(tmp.n.challenges[21].rewardEffect)+"x"}
 		},
         22: {
@@ -1686,16 +1686,16 @@ addLayer("s", {
 			name: "Satan's Masterpiece",
 			challengeDescription() {return "The row 3 effects and side layers effects don't work anymore, and choose between 3 buffs and nerfs in the corrupt politician layer<br>Challenge completions : "+challengeCompletions("s", 12)+"/9"},
 			goalDescription() {
-                if(challengeCompletions("s", 12) == 0) return "Max electricity"
-                if(challengeCompletions("s", 12) == 1) return "Max electricity with another combinaison than 1-2"
-                if(challengeCompletions("s", 12) == 2) return "Max electricity with another combinaison than 1-1 or 1-2"
-                if(challengeCompletions("s", 12) == 3) return "Max electricity with another combinaison than 1-1 or 1-2 or 1-3"
-                if(challengeCompletions("s", 12) == 4) return "Max electricity with another combinaison than 1-1 or 1-2 or 1-3 or 3-2"
-                if(challengeCompletions("s", 12) == 5) return "Max electricity with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 3-2"
-                if(challengeCompletions("s", 12) == 6) return "Max electricity with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 2-3 or 3-2"
-                if(challengeCompletions("s", 12) == 7) return "Max electricity with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 2-3 or 3-2 or 3-3"
-                if(challengeCompletions("s", 12) == 8) return "Max electricity with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 2-3 or 3-1 or 3-2 or 3-3"
-                if(challengeCompletions("s", 12) == 9) return "Max electricity"
+                if(challengeCompletions("s", 12) == 0) return "e255294 KWh/s"
+                if(challengeCompletions("s", 12) == 1) return "e253762 KWh/s with another combinaison than 1-2"
+                if(challengeCompletions("s", 12) == 2) return "e253546 KWh/s with another combinaison than 1-1 or 1-2"
+                if(challengeCompletions("s", 12) == 3) return "e203503 KWh/s with another combinaison than 1-1 or 1-2 or 1-3"
+                if(challengeCompletions("s", 12) == 4) return "e203181 KWh/s with another combinaison than 1-1 or 1-2 or 1-3 or 3-2"
+                if(challengeCompletions("s", 12) == 5) return "e202062 KWh/s with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 3-2"
+                if(challengeCompletions("s", 12) == 6) return "e202061 KWh/s with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 2-3 or 3-2"
+                if(challengeCompletions("s", 12) == 7) return "e87258 KWh/s with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 2-3 or 3-2 or 3-3"
+                if(challengeCompletions("s", 12) == 8) return "e87252 KWh/s with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 2-3 or 3-1 or 3-2 or 3-3"
+                if(challengeCompletions("s", 12) == 9) return "F1.79e308 KWh/s"
             },
 			rewardDescription() {
                 if(challengeCompletions("s", 12) == 9) return "Raise electricity gain to the 1.05 th power"
@@ -1713,7 +1713,7 @@ addLayer("s", {
                 if(challengeCompletions("s", 12) == 6) return getPointGen().gte("e202061") && getBuyableAmount("p", 13).add(getBuyableAmount("p", 23)).eq(2)
                 if(challengeCompletions("s", 12) == 7) return getPointGen().gte("e87258") && getBuyableAmount("p", 13).add(getBuyableAmount("p", 21)).eq(2)
                 if(challengeCompletions("s", 12) == 8) return getPointGen().gte("e87252") && getBuyableAmount("p", 12).add(getBuyableAmount("p", 21)).eq(2)
-                if(challengeCompletions("s", 12) == 9) return getPointGen().gte(new Decimal(10).tetrate("1.78e308")) 
+                if(challengeCompletions("s", 12) == 9) return getPointGen().gte(new Decimal(10).tetrate("1.79e308")) 
             },
 		},
 	},

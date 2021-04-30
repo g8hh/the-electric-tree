@@ -11,11 +11,12 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.13",
-	name: "Easier Game"
+	num: "0.14",
+	name: "Wall Street"
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+    <br><h3>v0.14 : Wall Street ( April 30th )</h3><br>
     <br><h3>v0.13 : Easier Game ( April 25th )</h3><br>
     <br><h3>v0.12 : Zimbabwean Hyperinflation ( April 24th )</h3><br>
     <br><h3>v0.11 : Inflated ( April 23rd )</h3><br>
@@ -90,6 +91,7 @@ function getPointGen() {
 	}
 	if(maxedChallenge("s", 12)) gain = gain.pow(1.05)
 	if(hasUpgrade("i", 22)) gain = gain.pow(1.001)
+	if(hasUpgrade("i", 41)) gain = gain.pow(tmp.i.upgrades[41].effect)
 	gain = gain.pow(tmp.p.effect)
 	return gain
 }
@@ -104,7 +106,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return hasUpgrade("m", 65)
+	return hasMilestone("sh", 1)
 }
 
 

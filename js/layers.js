@@ -1198,6 +1198,7 @@ addLayer("c", {
 	resetsNothing() { return hasMilestone("c", 3) },
     doReset(resettingLayer){
         let keep = []
+        if(hasMilestone("sh", 1)) keep.push("milestones")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     upgrades: {
@@ -1366,6 +1367,7 @@ addLayer("n", {
     doReset(resettingLayer){
         let keep = []
         if(hasMilestone("sh", 0)) keep.push("challenges")
+        if(hasMilestone("sh", 1)) keep.push("milestones")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     upgrades: {
@@ -1615,6 +1617,7 @@ addLayer("s", {
     doReset(resettingLayer){
         let keep = []
         if(hasMilestone("sh", 0)) keep.push("challenges")
+        if(hasMilestone("sh", 1)) keep.push("milestones")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     upgrades: {

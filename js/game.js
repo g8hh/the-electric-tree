@@ -3,6 +3,7 @@ var needCanvasUpdate = true;
 var gameEnded = false;
 var devSpeed = false;
 var easyChallenges = false;
+var solarChallenge2 = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 var softcaps = {
 	b:[new Decimal(20), new Decimal(35), new Decimal(50), new Decimal(65), new Decimal(75), new Decimal(85), new Decimal(100), new Decimal(150), new Decimal(200), new Decimal(220), new Decimal(250), new Decimal(300), new Decimal(320), new Decimal(365), new Decimal(399), new Decimal(400), new Decimal(425), new Decimal(450), new Decimal(470), new Decimal(500), new Decimal(600), new Decimal(700), new Decimal(800), new Decimal(900), new Decimal(1000), new Decimal(2000), new Decimal(2500), new Decimal(2800), new Decimal(3000)],
 	c:[new Decimal(10), new Decimal(15), new Decimal(20), new Decimal(25), new Decimal(30), new Decimal(35), new Decimal(60), new Decimal(70), new Decimal(85), new Decimal(100)],
@@ -275,6 +276,7 @@ function startChallenge(layer, x) {
 			setBuyableAmount("p", 22, new Decimal(0))
 			setBuyableAmount("p", 23, new Decimal(0))
 		}
+		if(layer == "n" && x == 21) player.n.resetTime = 0
 		layerDataReset("w")
 		layerDataReset("b")
 		layerDataReset("m")
@@ -363,8 +365,17 @@ function gameLoop(diff) {
 	}
 	addTime(diff)
 	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
-	if(hasUpgrade("s", 15) || player.i.points.gt(1)) addPoints("i", player.i.points.times(tmp.i.effect.add(1).pow(diff).minus(1)))
-	if(hasUpgrade("i", 13)) player.p.points = player.p.points.times(new Decimal(0.99).pow(diff))
+	if(player.i.unlocked) {
+		if(hasUpgrade("i", 33)) {
+			player.i.points.layer = tmp.i.effect.layer
+			player.i.points.mag = tmp.i.effect.mag
+			player.i.layer = ((tmp.i.effect.layer > player.i.points.layer ? tmp.i.effect.layer:player.i.points.layer) > player.i.layer ? (tmp.i.effect.layer > player.i.points.layer ? tmp.i.effect.layer:player.i.points.layer):player.i.layer)
+			if(player.i.layer > player.i.points.layer || player.i.points.layer == NaN) player.i.points.layer = player.i.layer
+			if(player.i.mag > player.i.points.mag || player.i.points.mag == NaN) player.i.points.mag = player.i.mag
+		}
+		else addPoints("i", player.i.points.times(tmp.i.effect.add(1).pow(diff).minus(1)))
+    }
+	if(hasUpgrade("i", 13) && !hasUpgrade("i", 43)) player.p.points = player.p.points.times(new Decimal(0.99).pow(diff))
 
 	for (x = 0; x <= maxRow; x++){
 		for (item in TREE_LAYERS[x]) {
@@ -425,6 +436,7 @@ var interval = setInterval(function() {
 	ticking = true
 	let now = Date.now()
 	let diff = (now - player.time) / 1e3
+	player.i.diff = diff
 	if (player.offTime !== undefined) {
 		if (player.offTime.remain > modInfo.offlineLimit * 3600) player.offTime.remain = modInfo.offlineLimit * 3600
 		if (player.offTime.remain > 0) {

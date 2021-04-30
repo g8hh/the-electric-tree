@@ -317,6 +317,12 @@ addLayer("m", {
             cost() { return new Decimal("1e5500000000") },
             unlocked() { return hasUpgrade("g", 14) || hasUpgrade("m", 64) },
         },
+        65: {
+            title: "Wall Street",
+            description: "Unlock shares",
+            cost() { return new Decimal("1e10500000000") },
+            unlocked() { return getBuyableAmount("s", 11).gte(9) || hasUpgrade("m", 65) },
+        },
     },
     buyables: {
         rows: 1,
@@ -522,7 +528,8 @@ addLayer("b", {
             if(hasUpgrade("b", 44)) {eff = eff.pow(3)}
             eff = eff.pow(3)
         }
-		eff = eff.pow(player.b.points)
+        if(hasUpgrade("i", 45)) eff = eff.pow(player.b.points.pow(tmp.i.upgrades[45].effect))
+		else eff = eff.pow(player.b.points)
         if(inChallenge("w", 12)) {eff = new Decimal(1)}
 		return eff
 	},
@@ -914,6 +921,7 @@ addLayer("w", {
         if(hasUpgrade("n", 11)) {mult = mult.times(tmp.n.upgrades[11].effect)}
         if(hasUpgrade("n", 14)) {mult = mult.times(tmp.n.upgrades[14].effect)}
         if(hasUpgrade("s", 12)) {mult = mult.times(tmp.s.upgrades[12].effect)}
+        if(hasUpgrade("sh", 12)) {mult = mult.times(tmp.sh.effect)}
         if(inChallenge("n", 11)) {
             mult = mult.div(new Decimal(100).pow(player.w.upgrades.length))
         }
@@ -1357,6 +1365,7 @@ addLayer("n", {
 	resetsNothing() { return hasMilestone("n", 1) },
     doReset(resettingLayer){
         let keep = []
+        if(hasMilestone("sh", 0)) keep.push("challenges")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     upgrades: {
@@ -1595,7 +1604,7 @@ addLayer("s", {
             return new Decimal(1)
         }
 		eff = new Decimal(10)
-		eff = eff.pow(player.s.points.pow(5))
+		eff = eff.pow(player.s.points.times(new Decimal(60).div(player.s.points.max(60))).pow(5))
         if(hasUpgrade("s", 13)) {eff = eff.pow(2)}
 		return eff
 	},
@@ -1605,6 +1614,7 @@ addLayer("s", {
 	resetsNothing() { return hasMilestone("s", 0) },
     doReset(resettingLayer){
         let keep = []
+        if(hasMilestone("sh", 0)) keep.push("challenges")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     upgrades: {
@@ -1684,7 +1694,7 @@ addLayer("s", {
 		},
         12: {
 			name: "Satan's Masterpiece",
-			challengeDescription() {return "The row 3 effects and side layers effects don't work anymore, and choose between 3 buffs and nerfs in the corrupt politician layer<br>Don't enter the challenge if 3rd nuclear challenge reward is not capped at e50000<br>Challenge completions : "+challengeCompletions("s", 12)+"/9"},
+			challengeDescription() {return "The row 3 effects and side layers effects don't work anymore, and choose between 3 buffs and nerfs in the corrupt politician layer<br>Don't enter the challenge if 3rd nuclear challenge reward is not capped at e50000 or if you have less than 22 nuclear power plants<br>Challenge completions : "+challengeCompletions("s", 12)+"/9"},
 			goalDescription() {
                 if(challengeCompletions("s", 12) == 0) return "e255294 KWh/s"
                 if(challengeCompletions("s", 12) == 1) return "e253762 KWh/s with another combinaison than 1-2"
@@ -1725,6 +1735,108 @@ addLayer("s", {
 		},
 	},
 })
+addLayer("sh", {
+    name: "shares", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "SH", // This appears on the layer's node. Default is the id with the first letter capitalized
+    row: 3, // Row the layer is in on the tree (0 is the first row)
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    color: "#522915",
+	branches: ["c", "n", "s"],
+    hotkeys: [
+        {key: "h", description: "Press H to Share Reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){return hasUpgrade("m", 65) || player.sh.unlocked},
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+        best: new Decimal(0),
+        total: new Decimal(0),
+        first: 0,
+        auto: false,
+        pseudoUpgs: [],
+    }},
+    requires() { return new Decimal(140) }, // Can be a function that takes requirement increases into account
+    resource: "shares", // Name of prestige currency
+    baseResource: "power plants", // Name of resource prestige is based on
+    baseAmount() {return player.c.points.add(player.n.points).add(player.s.points)}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent() { // Prestige currency exponent
+        exp = new Decimal(25)
+        return exp
+    },
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        if(hasUpgrade("sh", 13)) mult = mult.times(tmp.sh.upgrades[13].effect)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        exp = new Decimal(1)
+        return exp
+    },
+	effect() {
+		eff = new Decimal(1)
+        if(hasUpgrade("sh", 12)) eff = eff.times(player.sh.points.add(1).pow(150))
+		return eff
+	},
+	effectDescription() {
+        if(!hasUpgrade("sh", 12)) return ""
+        return "Which Are Boosting Worker Gain By " + format(tmp.sh.effect) + "x ( By Paying Them Below Minmum Wage Thanks To Your Corrupt Politicians )"
+	},
+    passiveGeneration() { return hasMilestone("sh", 2) },
+    doReset(resettingLayer){
+        let keep = []
+        if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
+    },
+    upgrades: {
+        rows: 5,
+        cols: 5,
+        11:{
+            title: "Share Holder",
+            description: "Congratulations, you bought your first share, to reward you, shares boost corrupt politician gain and inflation generation speed",
+            cost() { return new Decimal(1) },
+            unlocked() { return player.sh.unlocked || hasUpgrade("sh", 11) },
+            effect() {
+                eff = new Decimal(player.sh.points.add(2).pow(5))
+                return eff
+            },
+            effectDisplay() { return "*" + format(tmp.sh.upgrades[11].effect) + " to corrupt politician gain and *" + format(tmp.sh.upgrades[11].effect.log10().add(1).log10().add(1)) + " to inflation generation speed"}
+		},
+        12:{
+            title: "Real Boost",
+            description: "Unlock a share effect",
+            cost() { return new Decimal(0) },
+            unlocked() { return hasUpgrade("sh", 11) && player.sh.points.gte(1) || hasUpgrade("sh", 12) },
+        },
+        13:{
+            title: "Inflated Shares",
+            description: "Inflation boosts share gain",
+            cost() { return new Decimal(2) },
+            unlocked() { return hasUpgrade("sh", 11) && player.sh.points.gte(2) || hasUpgrade("sh", 13) },
+            effect() {
+                eff = new Decimal(player.i.layer).add(1).log10().add(1)
+                return eff
+            },
+            effectDisplay() { return "*" + format(tmp.sh.upgrades[13].effect) + " to share gain"}
+		},
+    },
+	milestones: {
+		0: {
+			requirementDescription: "1 Share",
+			done() { return player.sh.best.gte(1) },
+			effectDescription: "Keep all row 3 challenges",
+		},
+        1: {
+			requirementDescription: "10 Shares",
+			done() { return player.sh.best.gte(10) },
+			effectDescription: "Keep all row 3 milestones",
+		},
+        2: {
+			requirementDescription: "1e15 Shares",
+			done() { return player.sh.best.gte("1e15") },
+			effectDescription: "Gain 100% of shares on reset every second",
+		},
+	},
+})
 addLayer("p", {
     tabFormat: [
         "main-display",
@@ -1758,17 +1870,20 @@ addLayer("p", {
 	},
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
-        if(hasUpgrade("p", 14)) {mult = mult.times(tmp.p.effect.pow(4))}
-        if(hasUpgrade("c", 23)) {mult = mult.times(5)}
-        if(hasUpgrade("g", 12)) {mult = mult.times(tmp.g.upgrades[12].effect)}
-        if(hasUpgrade("i", 14)) {mult = mult.times(tmp.i.upgrades[14].effect)}
-        if(hasChallenge("n", 22)) {mult = mult.times(tmp.n.challenges[22].rewardEffect)}
+        if(hasUpgrade("p", 14)) mult = mult.times(tmp.p.effect.pow(4))
+        if(hasUpgrade("p", 34)) mult = mult.times(tmp.p.upgrades[34].effect)
+        if(hasUpgrade("c", 23)) mult = mult.times(5)
+        if(hasUpgrade("g", 12)) mult = mult.times(tmp.g.upgrades[12].effect)
+        if(hasUpgrade("i", 14)) mult = mult.times(tmp.i.upgrades[14].effect)
+        if(hasUpgrade("sh", 11)) mult = mult.times(tmp.sh.upgrades[11].effect)
+        if(hasChallenge("n", 22)) mult = mult.times(tmp.n.challenges[22].rewardEffect)
         mult = mult.times(tmp.n.buyables[11].effect)
         mult = mult.times(tmp.g.effect)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         exp = new Decimal(1)
+        if(hasUpgrade("i", 42)) exp = exp.times(tmp.i.upgrades[42].effect)
         return exp
     },
 	effect() {
@@ -1779,6 +1894,7 @@ addLayer("p", {
         eff = eff.add(player.p.points.add(1).log(10).add(1).log10())
         if(hasUpgrade("p", 22)) {eff = eff.pow(1.25)}
         if(hasUpgrade("p", 25)) {eff = eff.pow(2)}
+        if(hasUpgrade("p", 41)) {eff = eff.pow(3)}
         if(inChallenge("n", 22)) {
             eff = eff.minus(1)
         }
@@ -1797,11 +1913,17 @@ addLayer("p", {
             } 
             else eff = eff.log10().minus(new Decimal(2).log10()).add(2)
         }
-        if(eff.gte(3)) {
+        if(eff.gte(3) && !hasUpgrade("g", 23)) {
             eff = eff.minus(2).pow(0.5).add(2)
         }
         if(eff.gte(5)) {
             eff = eff.log10().minus(new Decimal(5).log10()).add(1).pow(0.25).add(4)
+        }
+        if(eff.gte(8)) {
+            eff = eff.minus(8).pow(2/3).add(1).pow(0.25).add(7)
+        }
+        if(eff.gte(10)) {
+            eff = eff.log10().minus(new Decimal(10).log10()).add(1).pow(0.1).add(9)
         }
         return eff
 	},
@@ -1908,6 +2030,29 @@ addLayer("p", {
             description: "Unlock another battery buyable",
             cost() { return new Decimal("1e18") },
             unlocked() { return hasUpgrade("g", 12) || hasUpgrade("p", 33) },
+        },
+        34: {
+            title: "Corrupt Corruption",
+            description: "Corrupt politicians corrupt other politicians",
+            cost() { return new Decimal("1e95") },
+            unlocked() { return hasUpgrade("i", 43) || hasUpgrade("p", 34) },
+            effect() {
+                eff = new Decimal(player.p.points.pow(1/3))
+                return eff
+            },
+            effectDisplay() {return "*"+format(tmp.p.upgrades[34].effect)+" to corrupt politician gain"},
+        },
+        35: {
+            title: "Inflated Corruption",
+            description: "Boost inflation gain by a factor 5",
+            cost() { return new Decimal("1e485") },
+            unlocked() { return hasUpgrade("i", 43) || hasUpgrade("p", 35) },
+        },
+        41: {
+            title: "Live TV Fight, Uhh I Mean Debate",
+            description: "Corrupt politician effect is cubed",
+            cost() { return new Decimal("1e525") },
+            unlocked() { return hasUpgrade("i", 43) || hasUpgrade("p", 41) },
         },
     },
     buyables: {
@@ -2033,6 +2178,7 @@ addLayer("g", {
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         exp = new Decimal(1)
+        if(hasUpgrade("i", 42)) exp = exp.times(tmp.i.upgrades[42].effect)
         return exp
     },
 	effect() {
@@ -2041,6 +2187,7 @@ addLayer("g", {
         }
 		eff = new Decimal(1)
         eff = eff.times(player.g.points.add(1).log10().add(1).pow(5))
+        if(hasUpgrade("g", 21)) eff = eff.pow(10)
         return eff
 	},
 	effectDescription() {
@@ -2096,6 +2243,28 @@ addLayer("g", {
             cost() { return new Decimal("1e83") },
             unlocked() { return hasUpgrade("i", 31) || hasUpgrade("g", 15) },
         },
+        21: {
+            title: "Effects, Effects, Effects...",
+            description: "Raise corrupt government effect to the 10th power",
+            cost() { return new Decimal("1e274") },
+            unlocked() { return hasUpgrade("i", 43) || hasUpgrade("g", 21) },
+        },
+        22: {
+            title: "Dark Energy",
+            description: "Elecrticity boosts inflation generation speed",
+            cost() { return new Decimal("1e290") },
+            unlocked() { return hasUpgrade("i", 43) || hasUpgrade("g", 22) },
+            effect() { 
+				return new Decimal(player.points.add(1).log10().add(1).log10().pow(0.5))
+            },
+            effectDisplay() { return "*"+format(tmp.g.upgrades[22].effect) + " to inflation generation speed" },
+        },
+        23: {
+            title: "( Softcapped ) The End Of The Trilogy",
+            description: "Remove the second softcap on corrupt politician effect",
+            cost() { return new Decimal("1e315") },
+            unlocked() { return hasUpgrade("i", 43) || hasUpgrade("g", 23) },
+        },
     },
 })
 addLayer("i", {
@@ -2109,12 +2278,13 @@ addLayer("i", {
     row: "side", // Row the layer is in on the tree (0 is the first row)
     position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     color: "#0000ff",
-    layerShown(){return hasUpgrade("s", 15)},
+    layerShown(){return hasUpgrade("s", 15) || player.i.unlocked},
     startData() { return {
-        unlocked: true,
+        unlocked: false,
         points: new Decimal(1),
-        best: new Decimal(1),
-        total: new Decimal(1),
+        layer: 0,
+        mag: 1,
+        diif: 0,
         first: 0,
         auto: false,
         pseudoUpgs: [],
@@ -2143,13 +2313,23 @@ addLayer("i", {
         if(hasUpgrade("i", 25)) eff = eff.times(tmp.i.upgrades[25].effect)
         if(hasUpgrade("g", 13)) eff = eff.add(1).pow(tmp.g.upgrades[13].effect).minus(1)
         if(hasUpgrade("i", 32)) eff = eff.pow(2500)
+        if(hasUpgrade("sh", 11)) eff = eff.pow(tmp.sh.upgrades[11].effect.log10().add(1).log10().add(1))
         if(eff.gte("ee25") && !hasUpgrade("i", 32)) {
             if(hasUpgrade("g", 15)) eff = eff.times(new Decimal("ee25").pow(3)).pow(0.25)
             else eff = eff.times(new Decimal("ee25").pow(999)).pow(0.001)
-        }
+        } 
+        if(!hasUpgrade("i", 34))eff = eff.min("eee101")
+        tetr = new Decimal(1)
+        if(hasUpgrade("i", 35)) tetr = new Decimal(1.1)
+        if(hasUpgrade("p", 35)) tetr = tetr.times(5)
+        if(hasUpgrade("i", 44)) tetr = tetr.times(tmp.i.upgrades[44].effect)
+        if(hasUpgrade("g", 22)) tetr = tetr.times(tmp.g.upgrades[22].effect)
+        if(hasUpgrade("sh", 11)) tetr = tetr.times(tmp.sh.upgrades[11].effect.log10().add(1).log10().add(1))
+        if(hasUpgrade("i", 35)) eff = player.i.points.tetrate(tetr.times(player.i.diff*20))
         return eff
 	},
 	effectDescription() {
+        if(tmp.i.effect.gte("eee100") && !hasUpgrade("i", 34)) return "And Your Money Is Adding "+format(tmp.i.effect.times(100))+"% To that Amount Every Second ( Hardcapped )"
         if(tmp.i.effect.gte("ee25") && !hasUpgrade("i", 32)) return "And Your Money Is Adding "+format(tmp.i.effect.times(100))+"% To that Amount Every Second ( Softcapped )"
         return "And Your Money Is Adding "+format(tmp.i.effect.times(100))+"% To that Amount Every Second"
 	},
@@ -2225,7 +2405,7 @@ addLayer("i", {
             cost() { return new Decimal("1e500") },
             unlocked() { return hasUpgrade("i", 15) || hasUpgrade("i", 21) },
             effect() { 
-                eff = new Decimal(player.i.points.slog())
+                eff = new Decimal(player.i.points.slog()).min(1)
                 if(hasUpgrade("i", 23)) eff = eff.pow(tmp.i.upgrades[23].effect)
                 if(hasUpgrade("i", 24)) eff = eff.pow(tmp.i.upgrades[24].effect)
 				return eff
@@ -2244,7 +2424,7 @@ addLayer("i", {
             cost() { return new Decimal("1e15000") },
             unlocked() { return player.i.points.gte("1e10000") || hasUpgrade("i", 23) },
             effect() { 
-                eff = new Decimal(player.m.points.add(1).log10().pow(1/25))
+                eff = new Decimal(player.m.points.add(1).log10().pow(1/25)).min(1)
                 if(hasUpgrade("i", 24)) eff = eff.pow(tmp.i.upgrades[24].effect)
 				return eff
             },
@@ -2256,7 +2436,7 @@ addLayer("i", {
             cost() { return new Decimal("1e25000") },
             unlocked() { return player.i.points.gte("1e20000") || hasUpgrade("i", 24) },
             effect() { 
-                eff = new Decimal(player.m.points.add(1).log10().pow(1/50))
+                eff = new Decimal(player.m.points.add(1).log10().pow(1/50)).min(1)
 				return eff
             },
             effectDisplay() { return "^"+format(tmp.i.upgrades[24].effect) + " to Inflated++ and Zimbabwe" },
@@ -2295,6 +2475,70 @@ addLayer("i", {
             description: "Make the Hyperinflation formula better and enter the i n f l a t e d era",
             cost() { return new Decimal("ee100") },
             unlocked() { return player.i.points.gte("ee75") || hasUpgrade("i", 33) },
+        },
+        34: {
+            title: "Why ?",
+            description: "Why must inflation stop ?",
+            cost() { return new Decimal("eee100") },
+            unlocked() { return player.i.points.gte("eee100") || hasUpgrade("i", 34) },
+        },
+        35: {
+            title: "F",
+            description: "Inflation go brrr",
+            cost() { return new Decimal("eee250") },
+            unlocked() { return player.i.points.gte("eee110") || hasUpgrade("i", 35) },
+        },
+        41: {
+            title: "Finally, A Boost",
+            description: "Inflation boosts electricity gain",
+            cost() { return new Decimal("10").tetrate(2000) },
+            unlocked() { return player.i.layer > 500 || hasUpgrade("i", 41) },
+            effect() { 
+                eff = new Decimal(player.i.points.layer).add(1).pow(0.1)
+                if(eff.gte(1.5)) eff = new Decimal(1.5)
+				return eff
+            },
+            effectDisplay() { return "^"+format(tmp.i.upgrades[41].effect) + " to electricity gain" },
+        },
+        42: {
+            title: "Another Boost ?",
+            description: "Inflation boosts corrupt politician and corrupt government gain",
+            cost() { return new Decimal("10").tetrate(3000) },
+            unlocked() { return player.i.layer > 2200 || hasUpgrade("i", 42) },
+            effect() { 
+                eff = new Decimal(player.i.points.layer).add(1).pow(0.25)
+                if(eff.gte(1.75)) eff = new Decimal(1.75)
+				return eff
+            },
+            effectDisplay() { return "^"+format(tmp.i.upgrades[42].effect) + " to corrupt politician and corrupt governement gain" },
+        },
+        43: {
+            title: "Upgrade Stuff Before The Next Layer",
+            description: "Generation doesn't remove corrupt politicians anymore and unlock 3 corrupt politician upgrades and 3 corrupt government upgrades",
+            cost() { return new Decimal("10").tetrate(5000) },
+            unlocked() { return player.i.layer > 3500 || hasUpgrade("i", 43) },
+        },
+        44: {
+            title: "Another Self-Boost I Guess",
+            description: "Inflation boosts it's generation speed",
+            cost() { return new Decimal("10").tetrate(25000) },
+            unlocked() { return player.i.layer > 15000 || hasUpgrade("i", 44) },
+            effect() { 
+                eff = new Decimal(player.i.layer).add(1).log10().add(1)
+				return eff
+            },
+            effectDisplay() { return "*"+format(tmp.i.upgrades[44].effect) + " to inflation gain speed" },
+        },
+        45: {
+            title: "Battery Powering",
+            description: "Inflation boosts battery amount in the battery effect formula",
+            cost() { return new Decimal("10").tetrate(1500000) },
+            unlocked() { return player.i.layer > 500000 || hasUpgrade("i", 45) },
+            effect() { 
+                eff = new Decimal(player.i.layer).add(1).pow(1/30).min(2)
+				return eff
+            },
+            effectDisplay() { return "^"+format(tmp.i.upgrades[45].effect) + " to battery amount in the effect formula" },
         },
     },
 })

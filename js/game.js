@@ -366,7 +366,7 @@ function gameLoop(diff) {
 	addTime(diff)
 	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
 	if(player.i.unlocked) {
-		if(!hasUpgrade("s", 15) player.i.unlocked = false
+		if(!hasUpgrade("s", 15)) player.i.unlocked = false
 		if(hasUpgrade("i", 33)) {
 			player.i.points.layer = tmp.i.effect.layer
 			player.i.points.mag = tmp.i.effect.mag

@@ -2405,7 +2405,7 @@ addLayer("i", {
             cost() { return new Decimal("1e500") },
             unlocked() { return hasUpgrade("i", 15) || hasUpgrade("i", 21) },
             effect() { 
-                eff = new Decimal(player.i.points.slog()).min(1)
+                eff = new Decimal(player.i.points.slog()).max(1)
                 if(hasUpgrade("i", 23)) eff = eff.pow(tmp.i.upgrades[23].effect)
                 if(hasUpgrade("i", 24)) eff = eff.pow(tmp.i.upgrades[24].effect)
 				return eff
@@ -2424,7 +2424,7 @@ addLayer("i", {
             cost() { return new Decimal("1e15000") },
             unlocked() { return player.i.points.gte("1e10000") || hasUpgrade("i", 23) },
             effect() { 
-                eff = new Decimal(player.m.points.add(1).log10().pow(1/25)).min(1)
+                eff = new Decimal(player.m.points.add(1).log10().pow(1/25)).max(1)
                 if(hasUpgrade("i", 24)) eff = eff.pow(tmp.i.upgrades[24].effect)
 				return eff
             },
@@ -2436,7 +2436,7 @@ addLayer("i", {
             cost() { return new Decimal("1e25000") },
             unlocked() { return player.i.points.gte("1e20000") || hasUpgrade("i", 24) },
             effect() { 
-                eff = new Decimal(player.m.points.add(1).log10().pow(1/50)).min(1)
+                eff = new Decimal(player.m.points.add(1).log10().pow(1/50)).max(1)
 				return eff
             },
             effectDisplay() { return "^"+format(tmp.i.upgrades[24].effect) + " to Inflated++ and Zimbabwe" },

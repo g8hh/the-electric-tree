@@ -366,15 +366,15 @@ function gameLoop(diff) {
 	addTime(diff)
 	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
 	if(player.s.challenges[12] > (player.s.challenge2[0]+player.s.challenge2[1]+player.s.challenge2[2]+player.s.challenge2[3]+player.s.challenge2[4]+player.s.challenge2[5]+player.s.challenge2[6]+player.s.challenge2[7]+player.s.challenge2[8])) {
-		if(player.s.challenges[12] = 1) player.s.challenge2 = [0, 1, 0, 0, 0, 0, 0, 0, 0]
-		if(player.s.challenges[12] = 2) player.s.challenge2 = [1, 1, 0, 0, 0, 0, 0, 0, 0]
-		if(player.s.challenges[12] = 3) player.s.challenge2 = [1, 1, 1, 0, 0, 0, 0, 0, 0]
-		if(player.s.challenges[12] = 4) player.s.challenge2 = [1, 1, 1, 0, 0, 0, 0, 1, 0]
-		if(player.s.challenges[12] = 5) player.s.challenge2 = [1, 1, 1, 0, 1, 0, 0, 1, 0]
-		if(player.s.challenges[12] = 6) player.s.challenge2 = [1, 1, 1, 0, 1, 1, 0, 1, 0]
-		if(player.s.challenges[12] = 7) player.s.challenge2 = [1, 1, 1, 0, 1, 1, 0, 1, 1]
-		if(player.s.challenges[12] = 8) player.s.challenge2 = [1, 1, 1, 0, 1, 1, 1, 1, 1]
-		if(player.s.challenges[12] = 9) player.s.challenge2 = [1, 1, 1, 1, 1, 1, 1, 1, 1]
+		if(player.s.challenges[12] == 1) player.s.challenge2 = [0, 1, 0, 0, 0, 0, 0, 0, 0]
+		if(player.s.challenges[12] == 2) player.s.challenge2 = [1, 1, 0, 0, 0, 0, 0, 0, 0]
+		if(player.s.challenges[12] == 3) player.s.challenge2 = [1, 1, 1, 0, 0, 0, 0, 0, 0]
+		if(player.s.challenges[12] == 4) player.s.challenge2 = [1, 1, 1, 0, 0, 0, 0, 1, 0]
+		if(player.s.challenges[12] == 5) player.s.challenge2 = [1, 1, 1, 0, 1, 0, 0, 1, 0]
+		if(player.s.challenges[12] == 6) player.s.challenge2 = [1, 1, 1, 0, 1, 1, 0, 1, 0]
+		if(player.s.challenges[12] == 7) player.s.challenge2 = [1, 1, 1, 0, 1, 1, 0, 1, 1]
+		if(player.s.challenges[12] == 8) player.s.challenge2 = [1, 1, 1, 0, 1, 1, 1, 1, 1]
+		if(player.s.challenges[12] == 9) player.s.challenge2 = [1, 1, 1, 1, 1, 1, 1, 1, 1]
 	}
 	if(player.i.unlocked) {
 		if(player.i.points.layer > 25000000 && player.i.softcap == false) {

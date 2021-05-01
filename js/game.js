@@ -2,8 +2,10 @@ var player;
 var needCanvasUpdate = true;
 var gameEnded = false;
 var devSpeed = false;
+var easyChallenges = false;
+var solarChallenge2 = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 var softcaps = {
-	b:[new Decimal(20), new Decimal(35), new Decimal(50), new Decimal(65), new Decimal(75), new Decimal(85), new Decimal(100), new Decimal(150), new Decimal(200), new Decimal(220), new Decimal(250), new Decimal(300), new Decimal(320), new Decimal(365), new Decimal(399), new Decimal(400), new Decimal(425), new Decimal(450), new Decimal(470), new Decimal(500), new Decimal(600), new Decimal(700), new Decimal(800), new Decimal(900), new Decimal(1000), new Decimal(2000), new Decimal(2500), new Decimal(2800), new Decimal(3000)],
+	b:[new Decimal(20), new Decimal(35), new Decimal(50), new Decimal(65), new Decimal(75), new Decimal(85), new Decimal(100), new Decimal(150), new Decimal(200), new Decimal(220), new Decimal(250), new Decimal(300), new Decimal(320), new Decimal(365), new Decimal(399), new Decimal(400), new Decimal(425), new Decimal(450), new Decimal(470), new Decimal(500), new Decimal(600), new Decimal(700), new Decimal(800), new Decimal(900), new Decimal(1000), new Decimal(2000), new Decimal(2500), new Decimal(2800), new Decimal(3000), new Decimal(4000), new Decimal(5000), new Decimal(6000), new Decimal(7000), new Decimal(8000), new Decimal(9000), new Decimal(10000)],
 	c:[new Decimal(10), new Decimal(15), new Decimal(20), new Decimal(25), new Decimal(30), new Decimal(35), new Decimal(60), new Decimal(70), new Decimal(85), new Decimal(100)],
 	n:[new Decimal(5), new Decimal(10), new Decimal(11), new Decimal(15), new Decimal(20), new Decimal(25), new Decimal(30), new Decimal(40), new Decimal(50)],
 };
@@ -363,8 +365,22 @@ function gameLoop(diff) {
 	}
 	addTime(diff)
 	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
+	if(player.s.challenges[12] > (player.s.challenge2[0]+player.s.challenge2[1]+player.s.challenge2[2]+player.s.challenge2[3]+player.s.challenge2[4]+player.s.challenge2[5]+player.s.challenge2[6]+player.s.challenge2[7]+player.s.challenge2[8])) {
+		if(player.s.challenges[12] = 1) player.s.challenge2 = [0, 1, 0, 0, 0, 0, 0, 0, 0]
+		if(player.s.challenges[12] = 2) player.s.challenge2 = [1, 1, 0, 0, 0, 0, 0, 0, 0]
+		if(player.s.challenges[12] = 3) player.s.challenge2 = [1, 1, 1, 0, 0, 0, 0, 0, 0]
+		if(player.s.challenges[12] = 4) player.s.challenge2 = [1, 1, 1, 0, 0, 0, 0, 1, 0]
+		if(player.s.challenges[12] = 5) player.s.challenge2 = [1, 1, 1, 0, 1, 0, 0, 1, 0]
+		if(player.s.challenges[12] = 6) player.s.challenge2 = [1, 1, 1, 0, 1, 1, 0, 1, 0]
+		if(player.s.challenges[12] = 7) player.s.challenge2 = [1, 1, 1, 0, 1, 1, 0, 1, 1]
+		if(player.s.challenges[12] = 8) player.s.challenge2 = [1, 1, 1, 0, 1, 1, 1, 1, 1]
+		if(player.s.challenges[12] = 9) player.s.challenge2 = [1, 1, 1, 1, 1, 1, 1, 1, 1]
+	}
 	if(player.i.unlocked) {
-		if(!hasUpgrade("s", 15) && player.sh.unlocked == false) player.i.unlocked = false
+		if(player.i.points.layer > 25000000 && player.i.softcap == false) {
+			player.i.points.layer = 25000000
+			player.i.softcap = true
+		}
 		if(hasUpgrade("i", 33)) {
 			player.i.points.layer = tmp.i.effect.layer
 			player.i.points.mag = tmp.i.effect.mag

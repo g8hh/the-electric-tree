@@ -323,9 +323,43 @@ addLayer("m", {
             cost() { return new Decimal("1e10500000000") },
             unlocked() { return getBuyableAmount("s", 11).gte(9) || hasUpgrade("m", 65) },
         },
+        71: {
+            title: "The 4th One",
+            description: "Unlcok another battery buyable",
+            cost() { return new Decimal("1e14000000000") },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("m", 71) },
+        },
+        72: {
+            title: "( Softcapped ) 4th Of The Name",
+            description: "Remove the 3rd softcap on corrupt politician effect",
+            cost() { return new Decimal("1e26000000000") },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("m", 72) },
+        },
+        73: {
+            title: "Pushing A Litte Bit Further Again",
+            description: "Electricity gain is raised to the 1.025th power",
+            cost() { return new Decimal("1e90000000000") },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("m", 73) },
+        },
+        74: {
+            title: "Corruption : The Return",
+            description: "Money boosts corrupt politician gain",
+            cost() { return new Decimal("1e150000000000") },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("m", 74) },
+            effect() {
+                return new Decimal(10).pow(player.m.points.log10().pow(1/3))
+            },
+            effectDisplay() {return "*" + format(tmp.m.upgrades[74].effect) + " to corrupt politician gain"},
+        },
+        75: {
+            title: "Upgrade Boost",
+            description: "Multiply by 25000 the amount of effective Buyable Boost levels",
+            cost() { return new Decimal("1e170000000000") },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("m", 75) },
+        },
     },
     buyables: {
-        rows: 1,
+        rows: 2,
         cols: 3,
         11: {
             title: "Electric Powering",
@@ -356,10 +390,12 @@ addLayer("m", {
                 setBuyableAmount("m", 11, getBuyableAmount("m", 11).add(1))
             },
             effect() { 
+                eff = new Decimal("1e10").pow(getBuyableAmount("m", 11))
+                eff = eff.pow(tmp.m.buyables[21].effect)
                 if(inChallenge("n", 12)) {
-                    return new Decimal(1)
+                    eff = new Decimal(1)
                 }
-                return new Decimal("1e10").pow(getBuyableAmount("m", 11)) 
+                return eff
             }
         },
         12: {
@@ -400,6 +436,24 @@ addLayer("m", {
                     return new Decimal(0)
                 }
                 return new Decimal(getBuyableAmount("m", 13).pow(0.5).times(100)) 
+            }
+        },
+        21: {
+            title: "Electric Powering 2nd Generation",
+            display() {
+                return "Electric Powering is raised to the " + format(tmp.m.buyables[21].effect) + "th power<br>Cost : " + format(new Decimal(getBuyableAmount("m", 21)).tetrate(getBuyableAmount("m", 21).div(4).add(1))) + " money"
+            },
+            unlocked() { return hasUpgrade("b", 42) },
+            canAfford() { 
+                return player.m.points.gte(new Decimal(getBuyableAmount("m", 21)).tetrate(getBuyableAmount("m", 21).div(4).add(1)))
+            },
+            buy() { 
+                player.m.points = player.m.points.minus(new Decimal(getBuyableAmount("m", 21)).tetrate(getBuyableAmount("m", 21).div(4).add(1)))
+                setBuyableAmount("m", 21, getBuyableAmount("m", 21).add(1))
+            },
+            effect() {
+                eff = new Decimal(getBuyableAmount("m", 21).add(1).pow(5))
+                return eff
             }
         },
     },
@@ -467,24 +521,25 @@ addLayer("b", {
         if(player.b.points.gte(8000)) {exp = exp.add(1)}
         if(player.b.points.gte(9000)) {exp = exp.add(1)}
         if(player.b.points.gte(10000)) {exp = exp.add(5)}
-        if(hasUpgrade("c", 13)) {exp = exp.minus(1)}
-        if(hasUpgrade("n", 13)) {exp = exp.minus(tmp.n.upgrades[13].effect)}
+        if(hasUpgrade("b", 55)) exp = exp.minus(0.1)
+        if(hasUpgrade("w", 43)) exp = exp.minus(0.925)
+        if(hasUpgrade("c", 13)) exp = exp.minus(1)
+        if(hasUpgrade("n", 13)) exp = exp.minus(tmp.n.upgrades[13].effect)
         exp = exp.minus(tmp.b.buyables[11].effect)
         if(inChallenge("n", 11)) exp = exp.add(new Decimal(0.01).times(player.b.upgrades.length))
         if(inChallenge("s", 12)) {
             if(getBuyableAmount("p", 22).eq(1)) exp = exp.add(0.025)
         }
-        if(inChallenge("s", 21)) {
-            exp = exp.add(getBuyableAmount("p", 11).times(0.5))
-        }
+        if(inChallenge("s", 21)) exp = exp.add(getBuyableAmount("p", 11).times(0.5))
         return exp
     },
 	base() {
         base = new Decimal(10)
         base = base.minus(tmp.b.buyables[13].effect)
         if(inChallenge("s", 12)) {
-            if(getBuyableAmount("p", 12).eq(1)) base = base.minus(2.5)
+            if(getBuyableAmount("p", 12).eq(1)) base = base.minus(2.5).max(2)
         }
+        if(hasUpgrade("b", 54)) base = base.minus(1).div(250000000).add(1)
         return base
     },
     gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -524,6 +579,7 @@ addLayer("b", {
 		if(hasUpgrade("b", 21)) {eff = eff.pow(tmp.b.upgrades[21].effect)}
 		if(hasUpgrade("w", 14)) {eff = eff.pow(tmp.w.upgrades[14].effect)}
         if(hasUpgrade("m", 35)) {eff = eff.pow(1.1)}
+        if(hasUpgrade("b", 51)) {eff = eff.pow(1.1)}
         if(hasUpgrade("b", 33)) {
             if(hasUpgrade("b", 44)) {eff = eff.pow(3)}
             eff = eff.pow(3)
@@ -773,40 +829,91 @@ addLayer("b", {
             },
             unlocked() { return hasUpgrade("m", 45) || hasUpgrade("b", 45) },
 		},
+        51: {
+            title: "More Battery Power",
+            description: "Battery effect is raised to the 1.1th power",
+            cost() { return new Decimal(3580) },
+            onPurchase() {
+                if(hasMilestone("b", 2)) {player.b.points = player.b.points.add(this.cost)}
+            },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("b", 51) },
+        },
+        52: {
+            title: "Purchase Stuff",
+            description: "Add a 4th money buyable",
+            cost() { return new Decimal(4070) },
+            onPurchase() {
+                if(hasMilestone("b", 2)) {player.b.points = player.b.points.add(this.cost)}
+            },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("b", 52) },
+        },
+        53: {
+            title: "Solar Batteries",
+            description: "Batteries reduce solar power plant cost",
+            cost() { return new Decimal(4550) },
+            onPurchase() {
+                if(hasMilestone("b", 2)) {player.b.points = player.b.points.add(this.cost)}
+            },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("b", 53) },
+            effect() {
+                eff = new Decimal(player.b.points).add(1).log10().minus(2.5).max(1)
+                return eff
+            },
+            effectDisplay() { return "/" + format(tmp.b.upgrades[53].effect) + " to solar power plant cost"}
+        },
+        54: {
+            title: "Sheeper Batteries",
+            description: "Yes it is intended, bear with it<br>Battery cost base is divided by 250,000,000",
+            cost() { return new Decimal(5000) },
+            onPurchase() {
+                if(hasMilestone("b", 2)) {player.b.points = player.b.points.add(this.cost)}
+            },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("b", 54) },
+        },
+        55: {
+            title: "The 15th One",
+            description: "Battery cost exponent is reduced by 0.1",
+            cost() { return new Decimal(5910) },
+            onPurchase() {
+                if(hasMilestone("b", 2)) {player.b.points = player.b.points.add(this.cost)}
+            },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("b", 55) },
+        },
     },
     buyables: {
-        rows: 1,
+        rows: 2,
         cols: 3,
         11: {
             title: "Exponent Crusher",
             display() {
                 if(hasUpgrade("m", 62)) {
-                    return "Reduces battery cost exponent by " + format(tmp.b.buyables[11].effect) + "<br>Cost : " + format(new Decimal(5).add(getBuyableAmount("b", 11).pow(0.5)).times(getBuyableAmount("b", 11).add(1).pow(0.75)).floor()) + " batteries"
+                    return "Reduces battery cost exponent by " + format(tmp.b.buyables[11].effect) + "<br>Cost : " + format(new Decimal(5).add(getBuyableAmount("b", 11).pow(0.5)).times(getBuyableAmount("b", 11).add(1).pow(getBuyableAmount("b", 11).gte(516) ? 0.8:0.75)).floor()) + " batteries"
                 }
-                return "Reduces battery cost exponent by " + format(tmp.b.buyables[11].effect) + "<br>Cost : " + format(new Decimal(5).add(getBuyableAmount("b", 11).pow(0.5)).times(getBuyableAmount("b", 11).add(1)).floor()) + " batteries"
+                return "Reduces battery cost exponent by " + format(tmp.b.buyables[11].effect) + "<br>Cost : " + format(new Decimal(5).add(getBuyableAmount("b", 11).pow(0.5)).times(getBuyableAmount("b", 11).add(1).pow(getBuyableAmount("b", 11).gte(516) ? 1.05:1)).floor()) + " batteries"
             },
             unlocked() { return hasUpgrade("w", 33) },
             canAfford() { 
                 if(hasUpgrade("m", 62)) {
-                    return player.b.points.gte(new Decimal(5).add(getBuyableAmount("b", 11).pow(0.5)).times(getBuyableAmount("b", 11).add(1).pow(0.75)).floor())
+                    return player.b.points.gte(new Decimal(5).add(getBuyableAmount("b", 11).pow(0.5)).times(getBuyableAmount("b", 11).add(1).pow(getBuyableAmount("b", 11).gte(516) ? 0.8:0.75)).floor())
                 }
-                return player.b.points.gte(new Decimal(5).add(getBuyableAmount("b", 11).pow(0.5)).times(getBuyableAmount("b", 11).add(1)).floor())
+                return player.b.points.gte(new Decimal(5).add(getBuyableAmount("b", 11).pow(0.5)).times(getBuyableAmount("b", 11).add(1).pow(getBuyableAmount("b", 11).gte(516) ? 1.05:1)).floor())
             },
             buy() {
                 if(!hasMilestone("b", 2)) {
                     if(hasUpgrade("m", 62)) {
-                        player.b.points = player.b.points.minus(new Decimal(5).add(getBuyableAmount("b", 11).pow(0.5)).times(getBuyableAmount("b", 11).add(1).pow(0.75)).floor())
+                        player.b.points = player.b.points.minus(new Decimal(5).add(getBuyableAmount("b", 11).pow(0.5)).times(getBuyableAmount("b", 11).add(1).pow(getBuyableAmount("b", 11).gte(516) ? 0.8:0.75)).floor())
                     }
                     else {
-                        player.b.points = player.b.points.minus(new Decimal(5).add(getBuyableAmount("b", 11).pow(0.5)).times(getBuyableAmount("b", 11).add(1)).floor())
+                        player.b.points = player.b.points.minus(new Decimal(5).add(getBuyableAmount("b", 11).pow(0.5)).times(getBuyableAmount("b", 11).add(1).pow(getBuyableAmount("b", 11).gte(516) ? 1.05:1)).floor())
                     }
                 }
                 setBuyableAmount("b", 11, getBuyableAmount("b", 11).add(1))
             },
             effect() {
-                eff = new Decimal(0.01).times(getBuyableAmount("b", 11).add(tmp.b.buyables[13].effect.add(1).pow(5)))
+                eff = new Decimal(0.01).times(getBuyableAmount("b", 11).times(tmp.b.buyables[21].effect).add(tmp.b.buyables[13].effect.add(1).pow(5)))
                 if(hasUpgrade("w", 34)) {eff = eff.times(1.1)}
                 if(eff.gte(5)) eff = eff.minus(4).pow(0.8).add(4)
+                if(eff.gte(6.5)) eff = eff.minus(5.5).pow(1/20).add(5.5)
                 if(inChallenge("n", 12)) {
                     eff = new Decimal(0)
                 }
@@ -829,7 +936,7 @@ addLayer("b", {
                 setBuyableAmount("b", 12, getBuyableAmount("b", 12).add(1))
             },
             effect() {
-                eff = new Decimal(1).add(getBuyableAmount("b", 12).pow(5))
+                eff = new Decimal(1).add(getBuyableAmount("b", 12).times(tmp.b.buyables[21].effect).pow(5))
                 if(inChallenge("n", 12)) {
                     eff = new Decimal(1)
                 }
@@ -838,19 +945,39 @@ addLayer("b", {
         },
         13: {
             title: "Base Smasher",
-            display() { return "Reduces battery base by " + format(tmp.b.buyables[13].effect) + " and add " + format(tmp.b.buyables[13].effect.add(1).pow(5)) + " free levels to Exponent Crusher<br>Cost : " + format(new Decimal(2000).add(getBuyableAmount("b", 13).pow(1.5).times(100)).floor()) + " batteries" },
+            display() { return "Reduces battery base by " + format(tmp.b.buyables[13].effect) + " and add " + format(tmp.b.buyables[13].effect.add(1).pow(5)) + " free levels to Exponent Crusher<br>Cost : " + format(new Decimal(2000).add(getBuyableAmount("b", 13).pow(getBuyableAmount("b", 13).gte(5) ? 2.5:1.5).times(100)).floor()) + " batteries" },
             unlocked() { return hasUpgrade("p", 33) },
             canAfford() { 
-                return player.b.points.gte(new Decimal(2000).add(getBuyableAmount("b", 13).pow(1.5).times(100)).floor())
+                return player.b.points.gte(new Decimal(2000).add(getBuyableAmount("b", 13).pow(getBuyableAmount("b", 13).gte(5) ? 2.5:1.5).times(100)).floor())
             },
             buy() {
                 if(!hasMilestone("b", 2)) {
-                    player.b.points = player.b.points.minus(new Decimal(2000).add(getBuyableAmount("b", 13).pow(1.5).times(100)).floor())
+                    player.b.points = player.b.points.minus(new Decimal(2000).add(getBuyableAmount("b", 13).pow(getBuyableAmount("b", 13).gte(5) ? 2.5:1.5).times(100)).floor())
                 }
                 setBuyableAmount("b", 13, getBuyableAmount("b", 13).add(1))
             },
             effect() {
-                eff = getBuyableAmount("b", 13).times(8).div(getBuyableAmount("b", 13).add(25))
+                eff = getBuyableAmount("b", 13).times(tmp.b.buyables[21].effect).times(8).div(getBuyableAmount("b", 13).times(tmp.b.buyables[21].effect).add(25))
+                return eff
+            }
+        },
+        21: {
+            title: "Buyable Boost",
+            display() { return "Boost all previous buyables by " + format(tmp.b.buyables[21].effect.times(100)) + "  %<br>Cost : " + format(new Decimal(2500).add(getBuyableAmount("b", 21).pow(7/3).times(25)).floor()) + " batteries" },
+            unlocked() { return hasUpgrade("m", 71) },
+            canAfford() { 
+                return player.b.points.gte(new Decimal(2500).add(getBuyableAmount("b", 21).pow(7/3).times(25)).floor())
+            },
+            buy() {
+                if(!hasMilestone("b", 2)) {
+                    player.b.points = player.b.points.minus(new Decimal(2500).add(getBuyableAmount("b", 21).pow(7/3).times(25)).floor())
+                }
+                setBuyableAmount("b", 21, getBuyableAmount("b",21).add(1))
+            },
+            effect() {
+                eff = new Decimal(1)
+                eff = eff.add(getBuyableAmount("b", 21).times(hasUpgrade("m", 75) ? 25000:1).pow(0.5).div(25))
+                eff.min(1.5)
                 return eff
             }
         },
@@ -916,6 +1043,7 @@ addLayer("w", {
         if(hasUpgrade("b", 32)) {mult = mult.times(tmp.b.upgrades[32].effect)}
         if(hasUpgrade("b", 43)) {mult = mult.times(tmp.b.upgrades[43].effect)}
         if(hasUpgrade("w", 21)) {mult = mult.times(tmp.w.upgrades[21].effect)}
+        if(hasUpgrade("w", 42)) {mult = mult.times(tmp.w.upgrades[42].effect)}
         if(hasUpgrade("c", 11)) {mult = mult.times(tmp.c.upgrades[11].effect)}
         if(hasUpgrade("c", 12)) {mult = mult.times(tmp.c.effect)}
         if(hasUpgrade("n", 11)) {mult = mult.times(tmp.n.upgrades[11].effect)}
@@ -945,6 +1073,7 @@ addLayer("w", {
         if(hasUpgrade("w", 25)) {eff = eff.pow(25)}
         if(hasUpgrade("b", 34)) {eff = eff.pow(15)}
         if(hasUpgrade("w", 32)) {eff = eff.pow(20)}
+        if(hasUpgrade("w", 41)) {eff = eff.pow(2500)}
 		return eff
 	},
 	effectDescription() {
@@ -955,6 +1084,7 @@ addLayer("w", {
         let keep = []
         if (hasMilestone("c", 2)) keep.push("milestones")
         if (hasMilestone("c", 2)) keep.push("challenges")
+        if (hasMilestone("sh", 3)) keep.push("upgrades")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     upgrades: {
@@ -1070,6 +1200,46 @@ addLayer("w", {
             cost() { return new Decimal("1e11632") },
             unlocked() { return hasUpgrade("m", 45) || hasUpgrade("w", 35) },
 		},
+        41: {
+            title: "Get Back To Work",
+            description: "Worker effect is raised to the 2500th power",
+            cost() { return new Decimal("1e600000000") },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("w", 41) },
+        },
+        42: {
+            title: "Shared Work",
+            description: "Shares boost worker gain",
+            cost() { return new Decimal("1e1300000000") },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("w", 42) },
+            effect() {
+                eff = new Decimal(player.sh.points.add(1).log10().add(1).pow(1000000000))
+                return eff
+            },
+            effectDisplay() { return "*" + format(tmp.w.upgrades[42].effect) + " to worker gain"}
+        },
+        43: {
+            title: "Batteries Required",
+            description: "Reduce the battery cost exponent by 0.925",
+            cost() { return new Decimal("1e2000000000") },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("w", 43) },
+        },
+        44: {
+            title: "Gotta Go Faster",
+            description: "Multiply inflation generation speed by 100",
+            cost() { return new Decimal("1e3075000000") },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("w", 44) },
+        },
+        45: {
+            title: "Inflated Governments",
+            description: "Inflation boosts corrupt government gain",
+            cost() { return new Decimal("1e4550000000") },
+            unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("w", 45) },
+            effect() {
+                eff = new Decimal(player.i.points.layer).add(1).pow(10/*Month*/)
+                return eff
+            },
+            effectDisplay() { return "*" + format(tmp.w.upgrades[45].effect) + " to corrupt government gain"}
+        },
     },
     challenges: {
 		rows:2,
@@ -1368,6 +1538,7 @@ addLayer("n", {
         let keep = []
         if(hasMilestone("sh", 0)) keep.push("challenges")
         if(hasMilestone("sh", 1)) keep.push("milestones")
+        if(hasMilestone("sh", 2)) keep.push("buyables")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     upgrades: {
@@ -1577,6 +1748,7 @@ addLayer("s", {
         first: 0,
         auto: false,
         pseudoUpgs: [],
+        challenge2: [0, 0, 0, 0, 0, 0, 0, 0, 0]
     }},
     requires() { return new Decimal(100) }, // Can be a function that takes requirement increases into account
     resource: "solar power plants", // Name of prestige currency
@@ -1595,6 +1767,7 @@ addLayer("s", {
         if(hasUpgrade("s", 11)) {mult = mult.div(1.5)}
         if(hasUpgrade("g", 11)) {mult = mult.div(tmp.g.upgrades[11].effect)}
         if(hasUpgrade("n", 22)) {mult = mult.div(5)}
+        if(hasUpgrade("b", 53)) {mult = mult.div(tmp.b.upgrades[53].effect)}
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -1606,7 +1779,7 @@ addLayer("s", {
             return new Decimal(1)
         }
 		eff = new Decimal(10)
-		eff = eff.pow(player.s.points.times(new Decimal(60).div(player.s.points.max(60))).pow(5))
+		eff = eff.pow(player.s.points.pow(5))
         if(hasUpgrade("s", 13)) {eff = eff.pow(2)}
 		return eff
 	},
@@ -1618,6 +1791,7 @@ addLayer("s", {
         let keep = []
         if(hasMilestone("sh", 0)) keep.push("challenges")
         if(hasMilestone("sh", 1)) keep.push("milestones")
+        if(hasMilestone("sh", 2)) keep.push("buyables")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     upgrades: {
@@ -1697,18 +1871,19 @@ addLayer("s", {
 		},
         12: {
 			name: "Satan's Masterpiece",
-			challengeDescription() {return "The row 3 effects and side layers effects don't work anymore, and choose between 3 buffs and nerfs in the corrupt politician layer<br>Don't enter the challenge if 3rd nuclear challenge reward is not capped at e50000 or if you have less than 22 nuclear power plants<br>Challenge completions : "+challengeCompletions("s", 12)+"/9"},
+			challengeDescription() {return "The row 3 effects and side layers effects don't work anymore, and choose between 3 buffs and nerfs in the corrupt politician layer<br>Challenge completions : "+challengeCompletions("s", 12)+"/9"},
 			goalDescription() {
-                if(challengeCompletions("s", 12) == 0) return "e255294 KWh/s"
-                if(challengeCompletions("s", 12) == 1) return "e253762 KWh/s with another combinaison than 1-2"
-                if(challengeCompletions("s", 12) == 2) return "e253546 KWh/s with another combinaison than 1-1 or 1-2"
-                if(challengeCompletions("s", 12) == 3) return "e203503 KWh/s with another combinaison than 1-1 or 1-2 or 1-3"
-                if(challengeCompletions("s", 12) == 4) return "e203181 KWh/s with another combinaison than 1-1 or 1-2 or 1-3 or 3-2"
-                if(challengeCompletions("s", 12) == 5) return "e202062 KWh/s with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 3-2"
-                if(challengeCompletions("s", 12) == 6) return "e202061 KWh/s with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 2-3 or 3-2"
-                if(challengeCompletions("s", 12) == 7) return "e87258 KWh/s with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 2-3 or 3-2 or 3-3"
-                if(challengeCompletions("s", 12) == 8) return "e87252 KWh/s with another combinaison than 1-1 or 1-2 or 1-3 or 2-2 or 2-3 or 3-1 or 3-2 or 3-3"
-                if(challengeCompletions("s", 12) == 9) return "F1.79e308 KWh/s"
+                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 21)).eq(2) && player.s.challenge2[0] == 0) return "e253,762 KWh/s"
+                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 22)).eq(2) && player.s.challenge2[1] == 0) return "e255,294 KWh/s"
+                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 23)).eq(2) && player.s.challenge2[2] == 0) return "e253,546 KWh/s"
+                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 21)).eq(2) && player.s.challenge2[3] == 0) return "e87,252 KWh/s"
+                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 22)).eq(2) && player.s.challenge2[4] == 0) return "e203,181 KWh/s"
+                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 23)).eq(2) && player.s.challenge2[5] == 0) return "e202,062 KWh/s"
+                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 21)).eq(2) && player.s.challenge2[6] == 0) return "e87,258 KWh/s"
+                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 22)).eq(2) && player.s.challenge2[7] == 0) return "e203,503 KWh/s"
+                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 23)).eq(2) && player.s.challenge2[8] == 0) return "e202,061 KWh/s"
+                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 12)).add(getBuyableAmount("p", 13)).add(getBuyableAmount("p", 21)).add(getBuyableAmount("p", 22)).add(getBuyableAmount("p", 23)).eq(2)) return "You already completed the challenge with this combination, restart the challenge and choose another one"
+                return "Depends on the buff/nerf"
             },
 			rewardDescription() {
                 if(challengeCompletions("s", 12) == 9) return "Raise electricity gain to the 1.05 th power"
@@ -1717,16 +1892,27 @@ addLayer("s", {
 			unlocked() { return hasUpgrade("c", 24) || inChallenge("s", 12) || hasChallenge("s", 12) },
             completionLimit: 9,
 			canComplete() { 
-                if(challengeCompletions("s", 12) == 0) return getPointGen().gte("e255294") && getBuyableAmount("p", 11).add(getBuyableAmount("p", 22)).eq(2)
-                if(challengeCompletions("s", 12) == 1) return getPointGen().gte("e253762") && getBuyableAmount("p", 11).add(getBuyableAmount("p", 21)).eq(2)
-                if(challengeCompletions("s", 12) == 2) return getPointGen().gte("e253546") && getBuyableAmount("p", 11).add(getBuyableAmount("p", 23)).eq(2)
-                if(challengeCompletions("s", 12) == 3) return getPointGen().gte("e203503") && getBuyableAmount("p", 13).add(getBuyableAmount("p", 22)).eq(2)
-                if(challengeCompletions("s", 12) == 4) return getPointGen().gte("e203181") && getBuyableAmount("p", 12).add(getBuyableAmount("p", 22)).eq(2)
-                if(challengeCompletions("s", 12) == 5) return getPointGen().gte("e202062") && getBuyableAmount("p", 12).add(getBuyableAmount("p", 23)).eq(2)
-                if(challengeCompletions("s", 12) == 6) return getPointGen().gte("e202061") && getBuyableAmount("p", 13).add(getBuyableAmount("p", 23)).eq(2)
-                if(challengeCompletions("s", 12) == 7) return getPointGen().gte("e87258") && getBuyableAmount("p", 13).add(getBuyableAmount("p", 21)).eq(2)
-                if(challengeCompletions("s", 12) == 8) return getPointGen().gte("e87252") && getBuyableAmount("p", 12).add(getBuyableAmount("p", 21)).eq(2)
-                if(challengeCompletions("s", 12) == 9) return getPointGen().gte(new Decimal(10).tetrate("1.79e308")) 
+                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 21)).eq(2)) return getPointGen().gte("e253762")
+                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 22)).eq(2)) return getPointGen().gte("e255294")
+                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 23)).eq(2)) return getPointGen().gte("e253546")
+                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 21)).eq(2)) return getPointGen().gte("e87252")
+                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 22)).eq(2)) return getPointGen().gte("e203181") 
+                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 23)).eq(2)) return getPointGen().gte("e202062") 
+                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 21)).eq(2)) return getPointGen().gte("e87258")
+                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 22)).eq(2)) return getPointGen().gte("e203503") 
+                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 23)).eq(2)) return getPointGen().gte("e202061")
+                return getPointGen().layer > 1.79e308
+            },
+            onComplete() {
+                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 21)).eq(2)) player.s.challenge2[0] = 1
+                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 22)).eq(2)) player.s.challenge2[1] = 1
+                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 23)).eq(2)) player.s.challenge2[2] = 1
+                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 21)).eq(2)) player.s.challenge2[3] = 1
+                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 22)).eq(2)) player.s.challenge2[4] = 1 
+                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 23)).eq(2)) player.s.challenge2[5] = 1 
+                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 21)).eq(2)) player.s.challenge2[6] = 1
+                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 22)).eq(2)) player.s.challenge2[7] = 1 
+                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 23)).eq(2)) player.s.challenge2[8] = 1
             },
 		},
 	},
@@ -1770,6 +1956,7 @@ addLayer("sh", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if(hasUpgrade("sh", 13)) mult = mult.times(tmp.sh.upgrades[13].effect)
+        if(hasUpgrade("sh", 14)) mult = mult.times(tmp.sh.upgrades[14].effect)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -1785,7 +1972,7 @@ addLayer("sh", {
         if(!hasUpgrade("sh", 12)) return ""
         return "Which Are Boosting Worker Gain By " + format(tmp.sh.effect) + "x ( By Paying Them Below Minmum Wage Thanks To Your Corrupt Politicians )"
 	},
-    passiveGeneration() { return hasMilestone("sh", 2) },
+    passiveGeneration() { return hasMilestone("sh", 4) },
     doReset(resettingLayer){
         let keep = []
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
@@ -1808,18 +1995,41 @@ addLayer("sh", {
             title: "Real Boost",
             description: "Unlock a share effect",
             cost() { return new Decimal(0) },
-            unlocked() { return hasUpgrade("sh", 11) && player.sh.points.gte(1) || hasUpgrade("sh", 12) },
+            unlocked() { return (hasUpgrade("sh", 11) && player.sh.points.gte(1)) || hasUpgrade("sh", 12) },
         },
         13:{
             title: "Inflated Shares",
             description: "Inflation boosts share gain",
             cost() { return new Decimal(2) },
-            unlocked() { return hasUpgrade("sh", 11) && player.sh.points.gte(2) || hasUpgrade("sh", 13) },
+            unlocked() { return (hasUpgrade("sh", 11) && player.sh.points.gte(2)) || hasUpgrade("sh", 13) },
             effect() {
                 eff = new Decimal(player.i.layer).add(1).log10().add(1)
                 return eff
             },
             effectDisplay() { return "*" + format(tmp.sh.upgrades[13].effect) + " to share gain"}
+		},
+        14:{
+            title: "Corrupt Shares",
+            description: "Corruption boosts share gain",
+            cost() { return new Decimal(25) },
+            unlocked() { return (hasUpgrade("sh", 11) && hasMilestone("sh", 2)) || hasUpgrade("sh", 14) },
+            effect() {
+                eff = new Decimal(player.p.points).add(1).log10().add(1).pow(1/3)
+                return eff
+            },
+            effectDisplay() { return "*" + format(tmp.sh.upgrades[14].effect) + " to share gain"}
+		},
+        15:{
+            title: "Upgraded Shares",
+            description: "Unlock a whole lot of upgrades",
+            cost() { return new Decimal(1000) },
+            unlocked() { return hasMilestone("sh", 3) || hasUpgrade("sh", 15) },
+		},
+        21:{
+            title: "Do You Want To Suffer",
+            description: "Unlock another challenge ( next update )",
+            cost() { return new Decimal(50000) },
+            unlocked() { return hasUpgrade("b", 55) || hasUpgrade("sh", 21) },
 		},
     },
 	milestones: {
@@ -1834,6 +2044,16 @@ addLayer("sh", {
 			effectDescription: "Keep all row 3 milestones",
 		},
         2: {
+			requirementDescription: "25 Shares",
+			done() { return player.sh.best.gte(25) },
+			effectDescription: "Keep all row 3 buyables",
+		},
+        3: {
+			requirementDescription: "100 Shares",
+			done() { return player.sh.best.gte(100) },
+			effectDescription: "Keep worker upgrades",
+		},
+        4: {
 			requirementDescription: "1e15 Shares",
 			done() { return player.sh.best.gte("1e15") },
 			effectDescription: "Gain 100% of shares on reset every second",
@@ -1879,6 +2099,8 @@ addLayer("p", {
         if(hasUpgrade("g", 12)) mult = mult.times(tmp.g.upgrades[12].effect)
         if(hasUpgrade("i", 14)) mult = mult.times(tmp.i.upgrades[14].effect)
         if(hasUpgrade("sh", 11)) mult = mult.times(tmp.sh.upgrades[11].effect)
+        if(hasUpgrade("m", 74)) mult = mult.times(tmp.m.upgrades[74].effect)
+        if(hasUpgrade("g", 25)) mult = mult.times(tmp.g.upgrades[25].effect)
         if(hasChallenge("n", 22)) mult = mult.times(tmp.n.challenges[22].rewardEffect)
         mult = mult.times(tmp.n.buyables[11].effect)
         mult = mult.times(tmp.g.effect)
@@ -1919,10 +2141,10 @@ addLayer("p", {
         if(eff.gte(3) && !hasUpgrade("g", 23)) {
             eff = eff.minus(2).pow(0.5).add(2)
         }
-        if(eff.gte(5)) {
+        if(eff.gte(5) && !hasUpgrade("m", 72)) {
             eff = eff.log10().minus(new Decimal(5).log10()).add(1).pow(0.25).add(4)
         }
-        if(eff.gte(8)) {
+        if(eff.gte(8) && !hasUpgrade("g", 25)) {
             eff = eff.minus(8).pow(2/3).add(1).pow(0.25).add(7)
         }
         if(eff.gte(10)) {
@@ -2057,6 +2279,17 @@ addLayer("p", {
             cost() { return new Decimal("1e525") },
             unlocked() { return hasUpgrade("i", 43) || hasUpgrade("p", 41) },
         },
+        42: {
+            title: "Extra Corruption",
+            description: "Corrupt politicians boost electricity gain",
+            cost() { return new Decimal("1e15400") },
+            unlocked() { return hasUpgrade("m", 74) || hasUpgrade("p", 42) },
+            effect() {
+                eff = new Decimal(player.p.points.pow(1958/*Year*/))
+                return eff
+            },
+            effectDisplay() {return "*"+format(tmp.p.upgrades[42].effect)+" to electricity gain"},
+        },
     },
     buyables: {
         rows: 2,
@@ -2173,7 +2406,9 @@ addLayer("g", {
 	},
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if(hasUpgrade("w", 45)) mult = mult.times(tmp.w.upgrades[45].effect)
         if(hasUpgrade("c", 24)) mult = mult.times(tmp.c.upgrades[24].effect)
+        if(hasUpgrade("g", 24)) mult = mult.times(tmp.g.upgrades[24].effect)
         if(hasUpgrade("i", 12)) mult = mult.times(tmp.i.upgrades[12].effect)
         if(hasUpgrade("i", 13)) mult = mult.times(tmp.i.upgrades[13].effect)
         if(hasUpgrade("i", 31)) mult = mult.times(tmp.i.upgrades[31].effect)
@@ -2268,6 +2503,26 @@ addLayer("g", {
             cost() { return new Decimal("1e315") },
             unlocked() { return hasUpgrade("i", 43) || hasUpgrade("g", 23) },
         },
+        24: {
+            title: "Self-Corruption",
+            description: "Corrupt governments boost their own gain",
+            cost() { return new Decimal("1e550") },
+            unlocked() { return hasUpgrade("w", 45) || hasUpgrade("g", 24) },
+            effect() { 
+				return new Decimal(player.g.points.add(1).log10().add(1).pow(4/* Day */))
+            },
+            effectDisplay() { return "*"+format(tmp.g.upgrades[24].effect) + " to corrupt government gain" },
+        },
+        25: {
+            title: "Big Ol' Boost",
+            description: "Corrupt governments boost corrupt politician gain and remove 4th softcap on corrupt politician effect",
+            cost() { return new Decimal("1e565") },
+            unlocked() { return hasUpgrade("w", 45) || hasUpgrade("g", 24) },
+            effect() { 
+				return new Decimal(player.g.points.add(1))
+            },
+            effectDisplay() { return "*"+format(tmp.g.upgrades[24].effect) + " to corrupt politician gain" },
+        },
     },
 })
 addLayer("i", {
@@ -2287,10 +2542,11 @@ addLayer("i", {
         points: new Decimal(1),
         layer: 0,
         mag: 1,
-        diif: 0,
+        diff: 0,
         first: 0,
         auto: false,
         pseudoUpgs: [],
+        softcap: false,
     }},
     requires() { return new Decimal(1000000) }, // Can be a function that takes requirement increases into account
     resource: "inflation", // Name of prestige currency
@@ -2328,6 +2584,10 @@ addLayer("i", {
         if(hasUpgrade("i", 44)) tetr = tetr.times(tmp.i.upgrades[44].effect)
         if(hasUpgrade("g", 22)) tetr = tetr.times(tmp.g.upgrades[22].effect)
         if(hasUpgrade("sh", 11)) tetr = tetr.times(tmp.sh.upgrades[11].effect.log10().add(1).log10().add(1))
+        if(hasUpgrade("w", 44)) tetr = tetr.times(100)
+        if(player.i.layer > 25000000) tetr = tetr.div(new Decimal(player.i.layer/25000000).pow(2/3))
+        if(player.i.layer > 100000000) tetr = tetr.div(new Decimal(player.i.layer).log10().pow(1.5))
+        tetr = tetr.max(1.1)
         if(hasUpgrade("i", 35)) eff = player.i.points.tetrate(tetr.times(player.i.diff*20))
         return eff
 	},

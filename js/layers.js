@@ -443,7 +443,7 @@ addLayer("m", {
             display() {
                 return "Electric Powering is raised to the " + format(tmp.m.buyables[21].effect) + "th power<br>Cost : " + format(new Decimal(getBuyableAmount("m", 21)).tetrate(getBuyableAmount("m", 21).div(4).add(1))) + " money"
             },
-            unlocked() { return hasUpgrade("b", 42) },
+            unlocked() { return hasUpgrade("b", 52) },
             canAfford() { 
                 return player.m.points.gte(new Decimal(getBuyableAmount("m", 21)).tetrate(getBuyableAmount("m", 21).div(4).add(1)))
             },

@@ -1892,15 +1892,15 @@ addLayer("s", {
 			unlocked() { return hasUpgrade("c", 24) || inChallenge("s", 12) || hasChallenge("s", 12) },
             completionLimit: 9,
 			canComplete() { 
-                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 21)).eq(2)) return getPointGen().gte("e253762")
-                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 22)).eq(2)) return getPointGen().gte("e255294")
-                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 23)).eq(2)) return getPointGen().gte("e253546")
-                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 21)).eq(2)) return getPointGen().gte("e87252")
-                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 22)).eq(2)) return getPointGen().gte("e203181") 
-                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 23)).eq(2)) return getPointGen().gte("e202062") 
-                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 21)).eq(2)) return getPointGen().gte("e87258")
-                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 22)).eq(2)) return getPointGen().gte("e203503") 
-                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 23)).eq(2)) return getPointGen().gte("e202061")
+                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 21)).eq(2)) return getPointGen().gte("e253762") && player.s.challenge2[0] == 0
+                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 22)).eq(2)) return getPointGen().gte("e255294") && player.s.challenge2[1] == 0
+                if(getBuyableAmount("p", 11).add(getBuyableAmount("p", 23)).eq(2)) return getPointGen().gte("e253546") && player.s.challenge2[2] == 0
+                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 21)).eq(2)) return getPointGen().gte("e87252") && player.s.challenge2[3] == 0
+                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 22)).eq(2)) return getPointGen().gte("e203181") && player.s.challenge2[4] == 0
+                if(getBuyableAmount("p", 12).add(getBuyableAmount("p", 23)).eq(2)) return getPointGen().gte("e202062") && player.s.challenge2[5] == 0
+                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 21)).eq(2)) return getPointGen().gte("e87258") && player.s.challenge2[6] == 0
+                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 22)).eq(2)) return getPointGen().gte("e203503") && player.s.challenge2[7] == 0
+                if(getBuyableAmount("p", 13).add(getBuyableAmount("p", 23)).eq(2)) return getPointGen().gte("e202061") && player.s.challenge2[8] == 0
                 return getPointGen().layer > 1.79e308
             },
             onComplete() {

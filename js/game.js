@@ -189,6 +189,12 @@ function addPoints(layer, gain) {
 			}
 		}
 	}
+	if(inChallenge("sh", 12)) {
+		if(layer == "b") gain = new Decimal(0)
+	}
+	if(inChallenge("sh", 21)) {
+		if(layer == "c" || layer == "n" || layer == "s") gain = new Decimal(0)
+	}
 	player[layer].points = player[layer].points.add(gain).max(0)
 	if (player[layer].best) player[layer].best = player[layer].best.max(player[layer].points)
 	if (player[layer].total) player[layer].total = player[layer].total.add(gain)
@@ -356,7 +362,10 @@ function gameLoop(diff) {
 		diff = 0
 		player.tab = "gameEnded"
 	}
-	if (devSpeed) diff *= devSpeed
+	
+	if (devSpeed != false) {
+		diff = diff * devSpeed
+	}
 
 	if (maxTickLength) {
 		let limit = maxTickLength()
@@ -377,10 +386,6 @@ function gameLoop(diff) {
 		if(player.s.challenges[12] == 9) player.s.challenge2 = [1, 1, 1, 1, 1, 1, 1, 1, 1]
 	}
 	if(player.i.unlocked) {
-		if(player.i.points.layer > 25000000 && player.i.softcap == false) {
-			player.i.points.layer = 25000000
-			player.i.softcap = true
-		}
 		if(hasUpgrade("i", 33)) {
 			player.i.points.layer = tmp.i.effect.layer
 			player.i.points.mag = tmp.i.effect.mag
@@ -389,8 +394,9 @@ function gameLoop(diff) {
 			if(player.i.mag > player.i.points.mag || player.i.points.mag == NaN) player.i.points.mag = player.i.mag
 		}
 		else addPoints("i", player.i.points.times(tmp.i.effect.add(1).pow(diff).minus(1)))
+		if(inChallenge("sh", 11)) player.i.points = new Decimal(1)
     }
-	if(hasUpgrade("i", 13) && !hasUpgrade("i", 43)) player.p.points = player.p.points.times(new Decimal(0.99).pow(diff))
+	if(hasUpgrade("i", 13) && !hasUpgrade("i", 43) && player.i.unlocked) player.p.points = player.p.points.times(new Decimal(0.99).pow(diff))
 
 	for (x = 0; x <= maxRow; x++){
 		for (item in TREE_LAYERS[x]) {
@@ -451,7 +457,7 @@ var interval = setInterval(function() {
 	ticking = true
 	let now = Date.now()
 	let diff = (now - player.time) / 1e3
-	player.i.diff = diff
+	player.i.diff = (devSpeed ? diff * devSpeed:diff)
 	if (player.offTime !== undefined) {
 		if (player.offTime.remain > modInfo.offlineLimit * 3600) player.offTime.remain = modInfo.offlineLimit * 3600
 		if (player.offTime.remain > 0) {

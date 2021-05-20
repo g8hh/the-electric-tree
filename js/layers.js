@@ -2659,7 +2659,7 @@ addLayer("i", {
         if(hasUpgrade("g", 22)) tetr = tetr.times(tmp.g.upgrades[22].effect)
         if(hasUpgrade("sh", 11)) tetr = tetr.times(tmp.sh.upgrades[11].effect.log10().add(1).log10().add(1))
         if(hasUpgrade("w", 44)) tetr = tetr.times(100)
-        if(player.i.layer > 25000000) tetr = tetr.div(new Decimal(player.i.layer/25000000).pow(2/3))
+        if(player.i.layer > 25000000) tetr = tetr.div(new Decimal(player.i.layer/25000000).pow(0.6))
         if(player.i.layer > 100000000) tetr = tetr.div(new Decimal(player.i.layer).log10().pow(1.5))
         tetr = tetr.max(1.1)
         if(hasUpgrade("i", 35)) eff = player.i.points.tetrate(tetr.times(player.i.diff*20))

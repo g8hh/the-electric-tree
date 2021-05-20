@@ -2068,10 +2068,10 @@ addLayer("sh", {
 		11: {
 			name: "Inflationless",
 			challengeDescription: "The title gives you all the information you need",
-			goalDescription: "e288,500,000,000 KWh",
+			goalDescription: "e280,000,000,000 KWh",
 			rewardDescription() {return (hasChallenge("sh", 11) ? "You think you deserve a reward for this ?":"Unknown")},
 			unlocked() { return hasUpgrade("sh", 21) || inChallenge("sh", 11) || hasChallenge("sh", 11) },
-			canComplete() { return player.points.gte("e288500000000")},
+			canComplete() { return player.points.gte("e280000000000")},
 		},
         12: {
 			name: "Batteryless",
@@ -2084,10 +2084,10 @@ addLayer("sh", {
         21: {
 			name: "Powerless",
 			challengeDescription: "The title still gives you all the information you need",
-			goalDescription: "e25,000,000,000 KWh",
+			goalDescription: "e24,400,000,000 KWh",
 			rewardDescription() {return (hasChallenge("sh", 21) ? "Reward ? Nah":"Unknown")},
 			unlocked() { return hasChallenge("sh", 12) || inChallenge("sh", 21) || hasChallenge("sh", 21) },
-			canComplete() { return player.points.gte("e25000000000")},
+			canComplete() { return player.points.gte("e24400000000")},
 		},
         22: {
 			name: "Hopeless",
@@ -2102,7 +2102,7 @@ addLayer("sh", {
                 if(hasUpgrade("sh", 24)) eff = eff.times(player.sh.points.add(1).log10().pow(20).add(1))
                 return eff 
             },
-            rewardDisplay() { return "*" + format(tmp.sh.challenges[22].rewardEffect) + " to share gain" },
+            rewardDisplay() { return (hasChallenge("sh", 22) ? "*" + format(tmp.sh.challenges[22].rewardEffect) + " to share gain":"Unknown") },
 			unlocked() { return hasChallenge("sh", 21) || inChallenge("sh", 22) || hasChallenge("sh", 22) },
 			canComplete() { return player.points.gte("e1510000000")},
 		},

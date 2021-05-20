@@ -325,7 +325,7 @@ addLayer("m", {
         },
         71: {
             title: "The 4th One",
-            description: "Unlcok another battery buyable",
+            description: "Unlock another battery buyable",
             cost() { return new Decimal("1e14000000000") },
             unlocked() { return hasUpgrade("sh", 15) || hasUpgrade("m", 71) },
         },

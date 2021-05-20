@@ -11,11 +11,12 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.15",
-	name: "Upgrades For Life"
+	num: "1.0",
+	name: "Not A Number"
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+    <br><h3>v1.0 : Not A Number ( May 20th )</h3><br>
     <br><h3>v0.15 : Upgrades For Life ( May 1st )</h3><br>
     <br><h3>v0.14 : Wall Street ( April 30th )</h3><br>
     <br><h3>v0.13 : Easier Game ( April 25th )</h3><br>
@@ -63,6 +64,7 @@ function getPointGen() {
 	if(hasUpgrade("m", 55)) {gain = gain.times(new Decimal("1e2000"))}
 	if(hasUpgrade("w", 11)) {gain = gain.times(tmp.w.upgrades[11].effect)}
 	if(hasUpgrade("p", 42)) {gain = gain.times(tmp.p.upgrades[42].effect)}
+	if(hasUpgrade("sh", 23)) {gain = gain.times(new Decimal(10).pow(tmp.sh.upgrades[23].effect.pow(12)))}
 	if(hasChallenge("w", 11)) {gain = gain.times(tmp.w.challenges[11].rewardEffect)}
 	if(hasChallenge("n", 21)) {gain = gain.times(tmp.n.challenges[21].rewardEffect)}
 	gain = gain.times(tmp.m.buyables[11].effect)
@@ -95,6 +97,7 @@ function getPointGen() {
 	if(hasUpgrade("i", 22)) gain = gain.pow(1.001)
 	if(hasUpgrade("i", 41)) gain = gain.pow(tmp.i.upgrades[41].effect)
 	if(hasUpgrade("m", 73)) gain = gain.pow(1.025)
+	if(hasUpgrade("sh", 23)) gain = gain.pow(tmp.sh.upgrades[23].effect)
 	gain = gain.pow(tmp.p.effect)
 	return gain
 }
@@ -109,7 +112,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return hasUpgrade("sh", 21)
+	return !(player.points.layer > -1)
 }
 
 

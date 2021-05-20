@@ -1366,6 +1366,8 @@ addLayer("c", {
 		return "Which Are Boosting Electricity Gain By "+format(tmp.c.effect.pow(100))+"x"
 	},
 	resetsNothing() { return hasMilestone("c", 3) },
+    canBuyMax() { return hasMilestone("sh", 1) },
+    autoPrestige() { return hasMilestone("sh", 1) },
     doReset(resettingLayer){
         let keep = []
         if(hasMilestone("sh", 1)) keep.push("milestones")
@@ -1534,6 +1536,8 @@ addLayer("n", {
         return "Which Are Boosting Electricity Gain By "+format(tmp.n.effect.pow(1000))+"x"
 	},
 	resetsNothing() { return hasMilestone("n", 1) },
+    canBuyMax() { return hasMilestone("sh", 1) },
+    autoPrestige() { return hasMilestone("sh", 1) },
     doReset(resettingLayer){
         let keep = []
         if(hasMilestone("sh", 0)) keep.push("challenges")
@@ -1787,6 +1791,8 @@ addLayer("s", {
         return "Which Are Boosting Electricity Gain By "+format(tmp.s.effect)+"x And Divide Battery Cost By "+format(tmp.s.effect.pow(1000))+"x"
 	},
 	resetsNothing() { return hasMilestone("s", 0) },
+    canBuyMax() { return hasMilestone("sh", 1) },
+    autoPrestige() { return hasMilestone("sh", 1) },
     doReset(resettingLayer){
         let keep = []
         if(hasMilestone("sh", 0)) keep.push("challenges")
@@ -1859,7 +1865,7 @@ addLayer("s", {
         },
     },
     challenges: {
-		rows:2,
+		rows:1,
 		cols:2,
 		11: {
 			name: "No Effects",
@@ -1957,6 +1963,7 @@ addLayer("sh", {
         mult = new Decimal(1)
         if(hasUpgrade("sh", 13)) mult = mult.times(tmp.sh.upgrades[13].effect)
         if(hasUpgrade("sh", 14)) mult = mult.times(tmp.sh.upgrades[14].effect)
+        if(hasChallenge("sh", 22)) mult = mult.times(tmp.sh.challenges[22].rewardEffect)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -2027,11 +2034,79 @@ addLayer("sh", {
 		},
         21:{
             title: "Do You Want To Suffer",
-            description: "Unlock another challenge ( next update )",
+            description: "Unlock another challenge",
             cost() { return new Decimal(50000) },
             unlocked() { return hasUpgrade("b", 55) || hasUpgrade("sh", 21) },
 		},
+        22:{
+            title: "Sharing Shares",
+            description: "4th share challenge's reward is 20% better",
+            cost() { return new Decimal("1e24") },
+            unlocked() { return hasMilestone("sh", 4) || hasUpgrade("sh", 22) },
+		},
+        23:{
+            title: "Electric Chairs ( Oops made a totally not intentional spelling error )",
+            description: "Shares boost electricity gain",
+            cost() { return new Decimal("1e50") },
+            unlocked() { return hasMilestone("sh", 4) || hasUpgrade("sh", 22) },
+            effect() {
+                eff = new Decimal(player.sh.points.add(1).log10().pow(1/3).add(1))
+                return eff
+            },
+            effectDisplay() { return "*" + format(new Decimal(10).pow(tmp.sh.upgrades[23].effect.pow(12))) + " to electricity gain and ^" + format(tmp.sh.upgrades[23].effect) + " to electricity gain" }
+		},
+        24:{
+            title: "Sharing Even More Shares",
+            description: "4th share challenges's reward is better",
+            cost() { return new Decimal("1e65") },
+            unlocked() { return hasUpgrade("sh", 23) || hasUpgrade("sh", 24) },
+		},
     },
+    challenges: {
+		rows:2,
+		cols:2,
+		11: {
+			name: "Inflationless",
+			challengeDescription: "The title gives you all the information you need",
+			goalDescription: "e288,500,000,000 KWh",
+			rewardDescription() {return (hasChallenge("sh", 11) ? "You think you deserve a reward for this ?":"Unknown")},
+			unlocked() { return hasUpgrade("sh", 21) || inChallenge("sh", 11) || hasChallenge("sh", 11) },
+			canComplete() { return player.points.gte("e288500000000")},
+		},
+        12: {
+			name: "Batteryless",
+			challengeDescription: "The title still gives you all the information you need",
+			goalDescription: "e10,000,000,000 KWh",
+			rewardDescription() {return (hasChallenge("sh", 12) ? "You don't deserve any reward":"Unknown")},
+			unlocked() { return hasChallenge("sh", 11) || inChallenge("sh", 12) || hasChallenge("sh", 12) },
+			canComplete() { return player.points.gte("e10000000000")},
+		},
+        21: {
+			name: "Powerless",
+			challengeDescription: "The title still gives you all the information you need",
+			goalDescription: "e25,000,000,000 KWh",
+			rewardDescription() {return (hasChallenge("sh", 21) ? "Reward ? Nah":"Unknown")},
+			unlocked() { return hasChallenge("sh", 12) || inChallenge("sh", 21) || hasChallenge("sh", 21) },
+			canComplete() { return player.points.gte("e25000000000")},
+		},
+        22: {
+			name: "Hopeless",
+			challengeDescription: "The three previous ones at the same time",
+			goalDescription: "e1,510,000,000 KWh",
+            countsAs: [11, 12, 21],
+			rewardDescription() {return (hasChallenge("sh", 22) ? "Alright, you can get a bonus<br>Shares boost share gain":"Unknown")},
+            rewardEffect() { 
+                eff = new Decimal(1)
+                if(hasUpgrade("sh", 22)) eff = eff.times(player.sh.points.pow(0.9))
+                else eff = eff.times(player.sh.points.pow(0.75))
+                if(hasUpgrade("sh", 24)) eff = eff.times(player.sh.points.add(1).log10().pow(20).add(1))
+                return eff 
+            },
+            rewardDisplay() { return "*" + format(tmp.sh.challenges[22].rewardEffect) + " to share gain" },
+			unlocked() { return hasChallenge("sh", 21) || inChallenge("sh", 22) || hasChallenge("sh", 22) },
+			canComplete() { return player.points.gte("e1510000000")},
+		},
+	},
 	milestones: {
 		0: {
 			requirementDescription: "1 Share",
@@ -2041,7 +2116,7 @@ addLayer("sh", {
         1: {
 			requirementDescription: "10 Shares",
 			done() { return player.sh.best.gte(10) },
-			effectDescription: "Keep all row 3 milestones",
+			effectDescription: "Keep all row 3 milestones and unlock aotu buy max for all row 3 currencies",
 		},
         2: {
 			requirementDescription: "25 Shares",
@@ -2578,8 +2653,7 @@ addLayer("i", {
             else eff = eff.times(new Decimal("ee25").pow(999)).pow(0.001)
         } 
         if(!hasUpgrade("i", 34))eff = eff.min("eee101")
-        tetr = new Decimal(1)
-        if(hasUpgrade("i", 35)) tetr = new Decimal(1.1)
+        tetr = new Decimal(1.1)
         if(hasUpgrade("p", 35)) tetr = tetr.times(5)
         if(hasUpgrade("i", 44)) tetr = tetr.times(tmp.i.upgrades[44].effect)
         if(hasUpgrade("g", 22)) tetr = tetr.times(tmp.g.upgrades[22].effect)

@@ -5,6 +5,7 @@ var softcaps = {
 	b:[new Decimal(20), new Decimal(35), new Decimal(50), new Decimal(65), new Decimal(75), new Decimal(85), new Decimal(100), new Decimal(150), new Decimal(200), new Decimal(220), new Decimal(250), new Decimal(300), new Decimal(320), new Decimal(365), new Decimal(399), new Decimal(400), new Decimal(425), new Decimal(450), new Decimal(470), new Decimal(500), new Decimal(600), new Decimal(700), new Decimal(800), new Decimal(900), new Decimal(1000), new Decimal(2000), new Decimal(2500), new Decimal(2800), new Decimal(3000), new Decimal(4000), new Decimal(5000), new Decimal(6000), new Decimal(7000), new Decimal(8000), new Decimal(9000), new Decimal(10000)],
 	c:[new Decimal(10), new Decimal(15), new Decimal(20), new Decimal(25), new Decimal(30), new Decimal(35), new Decimal(60), new Decimal(70), new Decimal(85), new Decimal(100)],
 	n:[new Decimal(5), new Decimal(10), new Decimal(11), new Decimal(15), new Decimal(20), new Decimal(25), new Decimal(30), new Decimal(40), new Decimal(50)],
+	cb:[new Decimal(10), new Decimal(25)]
 };
 
 // Don't change this
@@ -186,6 +187,13 @@ function addPoints(layer, gain) {
 		for(i = 0;i < softcaps.n.length;i++) {
 			if(player[layer].points.lt(softcaps.n[i]) && player[layer].points.add(gain).gt(softcaps.n[i])) {
 				gain = softcaps.n[i].minus(player[layer].points)
+			}
+		}
+	}
+	if(layer == "cb") {
+		for(i = 0;i < softcaps.cb.length;i++) {
+			if(player[layer].points.lt(softcaps.cb[i]) && player[layer].points.add(gain).gt(softcaps.cb[i])) {
+				gain = softcaps.cb[i].minus(player[layer].points)
 			}
 		}
 	}

@@ -2132,6 +2132,7 @@ addLayer("sh", {
         if(hasUpgrade("com", 11)) mult = mult.times(tmp.com.upgrades[11].effect)
         if(hasUpgrade("com", 12)) mult = mult.times(tmp.com.upgrades[12].effect)
         if(hasUpgrade("cap", 11)) mult = mult.times(tmp.cap.upgrades[11].effect)
+        if(hasUpgrade("cb", 23)) mult = mult.times(tmp.cb.upgrades[23].effect)
         if(hasChallenge("sh", 22)) mult = mult.times(tmp.sh.challenges[22].rewardEffect)
         return mult
     },
@@ -2256,6 +2257,17 @@ addLayer("sh", {
                 player.cap.first = true
             }
 		},
+        32:{
+            title: "What Do These Numbers Even Mean ?",
+            description: "Shares boost corrupt goverment gain",
+            cost() { return new Decimal("1e4000") },
+            unlocked() { return player.cb.unlocked || hasUpgrade("sh", 23) },
+            effect() {
+                eff = new Decimal(player.sh.points.add(1).pow(0.1))
+                return eff
+            },
+            effectDisplay() { return "*" + format(tmp.sh.upgrades[32].effect) + " to corrupt goverment gain" }
+		},
     },
     challenges: {
 		11: {
@@ -2329,7 +2341,7 @@ addLayer("sh", {
         5: {
 			requirementDescription: "1e600 Shares",
 			done() { return player.sh.best.gte("1e600") },
-			effectDescription: "Keep all row 3 upgrades on reset",
+			effectDescription: "Keep all row 3 upgrades and battery buyables on reset",
 		},
 	},
 })
@@ -2353,7 +2365,7 @@ addLayer("com", {
         auto: false,
         pseudoUpgs: [],
     }},
-    requires() { return (player.cap.unlocked && player.com.first == 0 ? (hasUpgrade("sh", 25) ? new Decimal("1e2200"):new Decimal(10).tetrate("1.79e308")):new Decimal("1e600")) }, // Can be a function that takes requirement increases into account
+    requires() { return (player.cap.unlocked && (player.com.first == 0 && player.cap.first == 1) ? (hasUpgrade("sh", 25) ? new Decimal("1e2200"):new Decimal(10).tetrate("1.79e308")):new Decimal("1e600")) }, // Can be a function that takes requirement increases into account
     resource: "communists", // Name of prestige currency
     baseResource: "shares", // Name of resource prestige is based on
     baseAmount() {return player.sh.points}, // Get the current amount of baseResource
@@ -2368,6 +2380,7 @@ addLayer("com", {
     },
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if(hasUpgrade("cb", 21)) mult = mult.div(tmp.cb.upgrades[21].effect)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -2382,9 +2395,11 @@ addLayer("com", {
 	effectDescription() {
         return "Which Are Multiplying Worker Gain By " + format(tmp.com.effect) + "x"
     },
-    passiveGeneration() { return false },
+    resetsNothing() { return hasMilestone("cb", 2) },
     doReset(resettingLayer){
         let keep = []
+        if (hasMilestone("cb", 0)) keep.push("milestones")
+        if (hasMilestone("cb", 1)) keep.push("upgrades")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     upgrades: {
@@ -2473,7 +2488,7 @@ addLayer("cap", {
         auto: false,
         pseudoUpgs: [],
     }},
-    requires() { return (player.com.unlocked && player.cap.first == 0 ? (hasUpgrade("sh", 25) ? new Decimal("1e1200"):new Decimal(10).tetrate("1.79e308")):new Decimal("1e600")) }, // Can be a function that takes requirement increases into account
+    requires() { return (player.com.unlocked && (player.cap.first == 0 && player.com.first == 1) ? (hasUpgrade("sh", 25) ? new Decimal("1e1200"):new Decimal(10).tetrate("1.79e308")):new Decimal("1e600")) }, // Can be a function that takes requirement increases into account
     resource: "capitalists", // Name of prestige currency
     baseResource: "shares", // Name of resource prestige is based on
     baseAmount() {return player.sh.points}, // Get the current amount of baseResource
@@ -2489,6 +2504,7 @@ addLayer("cap", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if(hasUpgrade("cap", 13)) mult = mult.div(tmp.cap.upgrades[13].effect)
+        if(hasUpgrade("cb", 22)) mult = mult.div(tmp.cb.upgrades[22].effect)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -2504,9 +2520,11 @@ addLayer("cap", {
 	effectDescription() {
         return "Which Are Multiplying Money Gain By " + format(tmp.cap.effect) + "x" + (hasUpgrade("m", 83) ? " And Multiplying Electricity Gain By " + format(tmp.cap.effect.pow(0.1)) + "x":"")
 	},
-    passiveGeneration() { return false },
+    resetsNothing() { return hasMilestone("cb", 2) },
     doReset(resettingLayer){
         let keep = []
+        if (hasMilestone("cb", 0)) keep.push("milestones")
+        if (hasMilestone("cb", 1)) keep.push("upgrades")
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
     },
     upgrades: {
@@ -2575,6 +2593,174 @@ addLayer("cap", {
 		},
     },
 })
+addLayer("cb", {
+    name: "corrupt boosts", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "CB", // This appears on the layer's node. Default is the id with the first letter capitalized
+    row: 5, // Row the layer is in on the tree (0 is the first row)
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    color: "#459ec4",
+	branches: ["com", "cap"],
+    hotkeys: [
+        {key: "B", description: "Press SHIFT+B to Corrupt Boost Reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){return player.cap.points.add(player.com.points).gte(30) || player.cb.unlocked},
+    startData() { return {
+        unlocked: false,
+        points: new Decimal(0),
+        best: new Decimal(0),
+        total: new Decimal(0),
+        power: new Decimal(0),
+        first: 0,
+        auto: false,
+        pseudoUpgs: [],
+    }},
+    requires() { return new Decimal(30) }, // Can be a function that takes requirement increases into account
+    resource: "corrupt boosts", // Name of prestige currency
+    baseResource: "communists and capitalists", // Name of resource prestige is based on
+    baseAmount() {return player.cap.points.add(player.com.points)}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent() { // Prestige currency exponent
+        exp = new Decimal(1.25)
+        if(player.cb.points.gte(10)) exp = exp.add(0.25)
+        if(player.cb.points.gte(25)) exp = exp.add(0.5)
+        return exp
+    },
+    base() {
+        base = new Decimal(1.01)
+        return base
+    },
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        if(hasUpgrade("cb", 14)) mult = mult.times(0.95)
+        if(hasUpgrade("g", 32)) mult = mult.div(tmp.g.upgrades[32].effect)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        exp = new Decimal(1)
+        return exp
+    },
+	effect() {
+		eff = new Decimal(1)
+        eff = eff.times(player.cb.points.times(tmp.cb.powerEffect).add(1).log10().add(1).pow(0.2))
+        if(hasUpgrade("cb", 13)) eff = eff.pow(1.5)
+		return eff
+	},
+    powerEffect() {
+        eff = new Decimal(1)
+        eff = eff.times(player.cb.power.add(1).log10().add(1).pow(0.2))
+        if(hasUpgrade("cb", 13)) eff = eff.pow(1.5)
+        if(hasUpgrade("cb", 15)) eff = eff.pow(tmp.cb.upgrades[15].effect)
+        return eff
+    },
+	effectDescription() {
+        return ("Which Are Raising Corrupt Goverment Gain And Their Effect To The " + format(tmp.cb.effect) + "th Power<br><br><br>You have " + format(player.cb.power) + " Corrupt Power, Making Corrupt Boosts " + format(tmp.cb.powerEffect) + "x More Efficient")
+	},
+    passiveGeneration() { return false },
+    doReset(resettingLayer){
+        let keep = []
+        if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
+    },
+    upgrades: {
+        11:{
+            title: "Corrupt Power",
+            description: "Corrupt boosts produce corrupt power, which increases the corrupt boost effect, but only when you are in the corrupt boosts tab",
+            cost() { return new Decimal(1) },
+            unlocked() { return (player.cb.unlocked && player.cap.points.add(player.com.points).gte(30)) || hasUpgrade("cb", 11) },
+		},
+        12:{
+            title: "I Need More Power",
+            description: "Corrupt power boosts its own generation",
+            cost() { return new Decimal(1) },
+            unlocked() { return (player.cb.unlocked && hasUpgrade("cb", 11) && player.cap.points.add(player.com.points).gte(30)) || hasUpgrade("cb", 12) },
+            effect() {
+                eff = new Decimal(player.cb.power.add(1).log10().add(1).pow(3))
+                return eff
+            },
+            effectDisplay() { return "*" + format(tmp.cb.upgrades[12].effect) + " to corrupt power gain"}
+		},
+        13:{
+            title: "The Corruption Is Everywhere",
+            description: "Corrupt boosts and corrupt power are 50% stronger",
+            cost() { return new Decimal(1) },
+            unlocked() { return (player.cb.unlocked && hasUpgrade("cb", 12) && player.cap.points.add(player.com.points).gte(30)) || hasUpgrade("cb", 13) },
+		},
+        14:{
+            title: "Black Friday",
+            description: "Corrupt boosts are 5% cheaper",
+            cost() { return new Decimal(1) },
+            unlocked() { return (player.cb.unlocked && hasUpgrade("cb", 13) && player.cap.points.add(player.com.points).gte(30)) || hasUpgrade("cb", 14) },
+		},
+        15:{
+            title: "Boostin'",
+            description: "Corrupt power is stronger based on its own amount",
+            cost() { return new Decimal(3) },
+            unlocked() { return player.cb.points.gte(2) || hasUpgrade("cb", 15) },
+            effect() {
+                eff = new Decimal(player.cb.power.add(1).log10().add(1).log10().add(1))
+                return eff
+            },
+            effectDisplay() { return "+" + format(tmp.cb.upgrades[15].effect.minus(1).times(100)) + "% stronger"}
+		},
+        21:{
+            title: "To Show You The Power Of Flex Tape",
+            description: "Corrupt boosts make communists cheaper",
+            cost() { return new Decimal(4) },
+            unlocked() { return hasUpgrade("cb", 15) || hasUpgrade("cb", 21) },
+            effect() {
+                eff = new Decimal(2).pow(player.cb.points.times(100).pow(1.1))
+                return eff
+            },
+            effectDisplay() { return "/" + format(tmp.cb.upgrades[21].effect) + " communist cost"}
+		},
+        22:{
+            title: "I Sawed This Upgrade In Half",
+            description: "Corrupt boosts make capitalists cheaper",
+            cost() { return new Decimal(5) },
+            unlocked() { return hasUpgrade("cb", 21) || hasUpgrade("cb", 22) },
+            effect() {
+                eff = new Decimal(2).pow(player.cb.points.times(100).pow(1.1))
+                return eff
+            },
+            effectDisplay() { return "/" + format(tmp.cb.upgrades[22].effect) + " capitalist cost"}
+		},
+        23:{
+            title: "Useful Corruption",
+            description: "The corrupt government effect gets better because why not and corrupt politicians boost share gain",
+            cost() { return new Decimal(10) },
+            unlocked() { return hasUpgrade("cb", 22) || hasUpgrade("cb", 23) },
+            effect() {
+                eff = new Decimal(10).pow(player.p.points.add(1).log10().pow(0.25))
+                return eff
+            },
+            effectDisplay() { return "*" + format(tmp.cb.upgrades[23].effect) + " share gain"}
+		},
+    },
+    milestones: {
+		0: {
+			requirementDescription: "1 Corrupt Boost",
+			done() { return player.cb.best.gte(1) },
+			effectDescription: "Keep row 5 milestones",
+		},
+        1: {
+			requirementDescription: "3 Corrupt Boosts",
+			done() { return player.cb.best.gte(3) },
+			effectDescription: "Keep row 5 upgrades",
+		},
+        2: {
+			requirementDescription: "4 Corrupt Boosts",
+			done() { return player.cb.best.gte(4) },
+			effectDescription: "Row 5 layers reset nothing",
+		},
+    },
+    update(diff) {
+        if(hasUpgrade("cb", 11)) {
+            let gain = player.cb.points.add(1).log10().add(1).pow(5).minus(1)
+            if(hasUpgrade("cb", 12)) gain = gain.times(tmp.cb.upgrades[12].effect)
+            gain = gain.times(diff)
+            if(player.tab == "cb") player.cb.power = player.cb.power.add(gain)
+        }
+    },
+})
 addLayer("p", {
     tabFormat: [
         "main-display",
@@ -2603,7 +2789,7 @@ addLayer("p", {
     baseAmount() {return player.m.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() { // Prestige currency exponent
-		exp = new Decimal(1).div(1000000000)
+		exp = new Decimal(1).div("1e9")
 		return exp
 	},
     gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -2949,13 +3135,14 @@ addLayer("g", {
     baseAmount() {return player.p.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() { // Prestige currency exponent
-		exp = new Decimal(1).div(new Decimal("1e1000000000"))
+		exp = new Decimal(1).div(new Decimal("1ee9"))
 		return exp
 	},
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if(hasUpgrade("w", 45)) mult = mult.times(tmp.w.upgrades[45].effect)
         if(hasUpgrade("c", 24)) mult = mult.times(tmp.c.upgrades[24].effect)
+        if(hasUpgrade("sh", 32)) mult = mult.times(tmp.sh.upgrades[32].effect)
         if(hasUpgrade("cap", 12)) mult = mult.times(tmp.cap.upgrades[11].effect)
         if(hasUpgrade("g", 24)) mult = mult.times(tmp.g.upgrades[24].effect)
         if(hasUpgrade("i", 12)) mult = mult.times(tmp.i.upgrades[12].effect)
@@ -2966,6 +3153,7 @@ addLayer("g", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         exp = new Decimal(1)
         if(hasUpgrade("i", 42)) exp = exp.times(tmp.i.upgrades[42].effect)
+        exp = exp.times(tmp.cb.effect)
         return exp
     },
 	effect() {
@@ -2975,6 +3163,8 @@ addLayer("g", {
 		eff = new Decimal(1)
         eff = eff.times(player.g.points.add(1).log10().add(1).pow(5))
         if(hasUpgrade("g", 21)) eff = eff.pow(10)
+        if(hasUpgrade("cb", 23)) eff = new Decimal(10).pow(eff.max(1).log10().pow(2))
+        eff = eff.pow(tmp.cb.effect)
         return eff
 	},
 	effectDescription() {
@@ -3056,7 +3246,7 @@ addLayer("g", {
             cost() { return new Decimal("1e550") },
             unlocked() { return hasUpgrade("w", 45) || hasUpgrade("g", 24) },
             effect() { 
-				return new Decimal(player.g.points.add(1).log10().add(1).pow(4/* Day */))
+				return new Decimal(player.g.points.add(1).log10().add(1).pow(4))
             },
             effectDisplay() { return "*"+format(tmp.g.upgrades[24].effect) + " to corrupt government gain" },
         },
@@ -3084,10 +3274,24 @@ addLayer("g", {
             effectDisplay() { return "*"+format(tmp.g.upgrades[31].effect) + " to share gain" },
         },
         32: {
+            title: "Insert Title Here",
+            description: "Corrupt goverments reduces corrupt boost cost",
+            cost() { return new Decimal("1e2000") },
+            unlocked() { return player.cb.unlocked || hasUpgrade("g", 32) },
+            effect() { 
+				eff = new Decimal(player.g.points.add(1).log10().add(1).log10().add(1).pow(0.05))
+                if(eff.gte(1.25)) eff = eff.minus(0.25).pow(1/3).add(0.25)
+                if(eff.gte(2)) eff = eff.minus(1).pow(1/3).add(1)
+                if(eff.gte(10)) eff = new Decimal(10)
+                return eff
+            },
+            effectDisplay() { return format(new Decimal(100).minus(new Decimal(100).div(tmp.g.upgrades[32].effect))) + "% cheaper corrupt boosts" },
+        },
+        33: {
             title: "Corrupt Hell",
             description: "Corrupt politicians and governments start producing corruption",
             cost() { return new Decimal("1e6666") },
-            unlocked() { return player.com.unlocked || player.cap.unlocked || hasUpgrade("g", 32) },
+            unlocked() { return player.com.unlocked || player.cap.unlocked || hasUpgrade("g", 33) },
         },
     },
 })
@@ -3109,6 +3313,7 @@ addLayer("i", {
         layer: 0,
         mag: 1,
         diff: 0,
+        layer_limit: 150000000,
         first: 0,
         auto: false,
         pseudoUpgs: [],
@@ -3154,7 +3359,7 @@ addLayer("i", {
         if(player.i.layer > 100000000) tetr = tetr.div(new Decimal(player.i.layer).log10().pow(0.75))
         tetr = tetr.max(1.1)
         if(hasUpgrade("i", 35)) eff = player.i.points.tetrate(tetr.times(player.i.diff*20))
-        if(eff.layer > 149999999) eff = new Decimal(10).tetrate(150000000)
+        if(eff.layer >= player.i.layer_limit) eff = new Decimal(10).tetrate(150000000)
         return eff
 	},
 	effectDescription() {

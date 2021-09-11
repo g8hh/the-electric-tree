@@ -300,6 +300,18 @@ function startChallenge(layer, x) {
 		layerDataReset("m")
 		player.points = new Decimal(0)
 	}
+	if(layer == "sh" && x == 31 && !hasChallenge("sh", 31)) {
+		layerDataReset("g")
+		layerDataReset("p")
+		layerDataReset("s")
+		layerDataReset("n")
+		layerDataReset("c")
+		layerDataReset("w")
+		layerDataReset("b")
+		layerDataReset("m")
+		player.points = new Decimal(0)
+		player.s.challenges[12] = 9
+	}
 	let enter = false
 	if (!player[layer].unlocked) return
 	if (player[layer].activeChallenge == x) {

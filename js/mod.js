@@ -12,11 +12,12 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.2",
-	name: "More Corruption",
+	num: "1.3",
+	name: "Still Can't Buy That God Damn Upgrade",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+    <br><h3>v1.3 : Still Can't Buy That God Damn Upgrade ( August 10th )</h3><br>
     <br><h3>v1.2 : More Corruption ( August 7th )</h3><br>
     <br><h3>v1.1 : Back Again ( July 3rd )</h3><br>
     <br><h3>v1.0.1 : Not A Number ( Fixed ) ( May 20th )</h3><br>
@@ -35,7 +36,7 @@ let changelog = `<h1>Changelog:</h1><br>
 	<br><h3>v0.5 : Pollution ( April 4th )</h3><br>
 	<br><h3>v0.4 : More Work ( April 2nd )</h3><br>
 	<br><h3>v0.3 : Start Working ( April 2nd )</h3><br>
-	<br><h3>v0.2.1 : Discord Fix ( April 1st )</h3><br>
+	<br><h3>v0.2.5 : Discord Fix ( April 1st )</h3><br>
 	<br><h3>v0.2 : Storing Electricity ( April 1st )</h3><br>
 	<br><h3>v0.1 : The Begenning ( March 31st )</h3><br>`
 
@@ -117,7 +118,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.cb.points.gte(15)
+	return player.g.points.gte("1e6000")
 }
 
 

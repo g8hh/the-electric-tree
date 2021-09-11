@@ -1,4 +1,25 @@
 addLayer("m", {
+    tabFormat: {
+        "Main":{
+            content: [
+                "main-display",
+                "prestige-button"
+            ],
+        },
+        "Upgrades":{
+            content: [
+                "main-display",
+                "upgrades"
+            ],
+        },
+        "Buyables":{
+            content: [
+                "main-display",
+                "buyables"
+            ],
+            unlocked() { return tmp.m.buyables[11].unlocked }
+        },
+    },
     name: "money", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "M", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 0, // Row the layer is in on the tree (0 is the first row)
@@ -513,6 +534,80 @@ addLayer("m", {
     },
 })
 addLayer("b", {
+    tabFormat: {
+        "Main":{
+            content: [
+                "main-display",
+                "prestige-button"
+            ],
+        },
+        "Upgrades":{
+            content: [
+                "main-display",
+                "upgrades"
+            ],
+        },
+        "Milestones":{
+            content: [
+                "main-display",
+                "milestones"
+            ],
+            unlocked() { return hasMilestone("b", 0) }
+        },
+        "Buyables":{
+            content: [
+                "main-display",
+                "buyables"
+            ],
+            unlocked() { return tmp.b.buyables[11].unlocked }
+        },
+        "Softcaps":{
+            content: [
+                "main-display",
+                ["display-text", function() { 
+                    let text = ""
+                    if(player.b.best.gte(20)) text = text + "20 Batteries : Base Cost Exp 1.25 --> 1.3<br><br>"
+                    if(player.b.best.gte(35)) text = text + "35 Batteries : Base Cost Exp 1.3 --> 1.35<br><br>"
+                    if(player.b.best.gte(50)) text = text + "50 Batteries : Base Cost Exp 1.35 --> 1.4<br><br>"
+                    if(player.b.best.gte(65)) text = text + "65 Batteries : Base Cost Exp 1.4 --> 1.5<br><br>"
+                    if(player.b.best.gte(75)) text = text + "75 Batteries : Base Cost Exp 1.5 --> 1.6<br><br>"
+                    if(player.b.best.gte(85)) text = text + "85 Batteries : Base Cost Exp 1.6 --> 1.75<br><br>"
+                    if(player.b.best.gte(100)) text = text + "100 Batteries : Base Cost Exp 1.75 --> 1.85<br><br>"
+                    if(player.b.best.gte(150)) text = text + "150 Batteries : Base Cost Exp 1.85 --> 2<br><br>"
+                    if(player.b.best.gte(200)) text = text + "200 Batteries : Base Cost Exp 2 --> 2.5<br><br>"
+                    if(player.b.best.gte(220)) text = text + "220 Batteries : Base Cost Exp 2.5 --> 3<br><br>"
+                    if(player.b.best.gte(250)) text = text + "250 Batteries : Base Cost Exp 3 --> 3.5<br><br>"
+                    if(player.b.best.gte(300)) text = text + "300 Batteries : Base Cost Exp 3.5 --> 3.75<br><br>"
+                    if(player.b.best.gte(320)) text = text + "320 Batteries : Base Cost Exp 3.75 --> 3.8<br><br>"
+                    if(player.b.best.gte(365)) text = text + "365 Batteries : Base Cost Exp 3.8 --> 3.85<br><br>"
+                    if(player.b.best.gte(399)) text = text + "399 Batteries : Base Cost Exp 3.85 --> 3.8647<br><br>"
+                    if(player.b.best.gte(400)) text = text + "400 Batteries : Base Cost Exp 3.8647 --> 4.5<br><br>"
+                    if(player.b.best.gte(425)) text = text + "425 Batteries : Base Cost Exp 4.5 --> 5<br><br>"
+                    if(player.b.best.gte(450)) text = text + "450 Batteries : Base Cost Exp 5 --> 5.5<br><br>"
+                    if(player.b.best.gte(470)) text = text + "470 Batteries : Base Cost Exp 5.5 --> 6.25<br><br>"
+                    if(player.b.best.gte(500)) text = text + "500 Batteries : Base Cost Exp 6.25 --> 7<br><br>"
+                    if(player.b.best.gte(600)) text = text + "600 Batteries : Base Cost Exp 7 --> 7.25<br><br>"
+                    if(player.b.best.gte(700)) text = text + "700 Batteries : Base Cost Exp 7.25 --> 7.5<br><br>"
+                    if(player.b.best.gte(800)) text = text + "800 Batteries : Base Cost Exp 7.5 --> 7.75<br><br>"
+                    if(player.b.best.gte(900)) text = text + "900 Batteries : Base Cost Exp 7.75 --> 8<br><br>"
+                    if(player.b.best.gte(1000)) text = text + "1000 Batteries : Base Cost Exp 8 --> 8.5<br><br>"
+                    if(player.b.best.gte(2000)) text = text + "2000 Batteries : Base Cost Exp 8.5 --> 10<br><br>"
+                    if(player.b.best.gte(2500)) text = text + "2500 Batteries : Base Cost Exp 10 --> 11.5<br><br>"
+                    if(player.b.best.gte(2800)) text = text + "2800 Batteries : Base Cost Exp 11.5 --> 12<br><br>"
+                    if(player.b.best.gte(3000)) text = text + "3000 Batteries : Base Cost Exp 12 --> 13<br><br>"
+                    if(player.b.best.gte(4000)) text = text + "4000 Batteries : Base Cost Exp 13 --> 14<br><br>"
+                    if(player.b.best.gte(5000)) text = text + "5000 Batteries : Base Cost Exp 14 --> 16.5<br><br>"
+                    if(player.b.best.gte(6000)) text = text + "6000 Batteries : Base Cost Exp 16.5 --> 17.5<br><br>"
+                    if(player.b.best.gte(7000)) text = text + "7000 Batteries : Base Cost Exp 17.5 --> 18.5<br><br>"
+                    if(player.b.best.gte(8000)) text = text + "8000 Batteries : Base Cost Exp 18.5 --> 19.5<br><br>"
+                    if(player.b.best.gte(9000)) text = text + "9000 Batteries : Base Cost Exp 19.5 --> 20.5<br><br>"
+                    if(player.b.best.gte(10000)) text = text + "10000 Batteries : Base Cost Exp 20.5 --> 25<br><br>"
+                    return text
+                },]
+            ],
+            unlocked() { return player.b.best.gte(20) }
+        },
+    },
     name: "batteries", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "B", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 1, // Row the layer is in on the tree (0 is the first row)
@@ -574,7 +669,7 @@ addLayer("b", {
         if(player.b.points.gte(7000)) exp = exp.add(1)
         if(player.b.points.gte(8000)) exp = exp.add(1)
         if(player.b.points.gte(9000)) exp = exp.add(1)
-        if(player.b.points.gte(10000)) exp = exp.add(5)
+        if(player.b.points.gte(10000)) exp = exp.add(4.5)
         if(hasUpgrade("b", 55)) exp = exp.minus(0.1)
         if(hasUpgrade("w", 43)) exp = exp.minus(0.925)
         if(hasUpgrade("c", 13)) exp = exp.minus(1)
@@ -594,6 +689,7 @@ addLayer("b", {
             if(getBuyableAmount("p", 12).eq(1)) base = base.minus(2.5).max(2)
         }
         if(hasUpgrade("b", 54)) base = base.minus(1).div(250000000).add(1)
+        if(hasUpgrade("cb", 25)) base = base.pow(0.001)
         return base
     },
     gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -1055,6 +1151,34 @@ addLayer("b", {
 	},
 })
 addLayer("w", {
+    tabFormat: {
+        "Main":{
+            content: [
+                "main-display",
+                "prestige-button"
+            ],
+        },
+        "Upgrades":{
+            content: [
+                "main-display",
+                "upgrades"
+            ],
+        },
+        "Milestones":{
+            content: [
+                "main-display",
+                "milestones"
+            ],
+            unlocked() { return hasMilestone("w", 0) }
+        },
+        "Challenges":{
+            content: [
+                "main-display",
+                "challenges"
+            ],
+            unlocked() { return tmp.w.challenges[11].unlocked }
+        },
+    },
     name: "worker", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "W", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 1, // Row the layer is in on the tree (0 is the first row)
@@ -1404,6 +1528,47 @@ addLayer("w", {
 	},
 })
 addLayer("c", {
+    tabFormat: {
+        "Main":{
+            content: [
+                "main-display",
+                "prestige-button"
+            ],
+        },
+        "Upgrades":{
+            content: [
+                "main-display",
+                "upgrades"
+            ],
+        },
+        "Milestones":{
+            content: [
+                "main-display",
+                "milestones"
+            ],
+            unlocked() { return hasMilestone("c", 0) }
+        },
+        "Softcaps":{
+            content: [
+                "main-display",
+                ["display-text", function() { 
+                    let text = ""
+                    if(player.c.best.gte(10)) text = text + "10 Coal Power Plants : Base Cost Exp 3 --> 3.25<br><br>"
+                    if(player.c.best.gte(15)) text = text + "15 Coal Power Plants : Base Cost Exp 3.25 --> 3.5<br><br>"
+                    if(player.c.best.gte(20)) text = text + "20 Coal Power Plants : Base Cost Exp 3.5 --> 3.75<br><br>"
+                    if(player.c.best.gte(25)) text = text + "25 Coal Power Plants : Base Cost Exp 3.75 --> 4.25<br><br>"
+                    if(player.c.best.gte(30)) text = text + "30 Coal Power Plants : Base Cost Exp 4.25 --> 4.75<br><br>"
+                    if(player.c.best.gte(35)) text = text + "35 Coal Power Plants : Base Cost Exp 4.75 --> 5.5<br><br>"
+                    if(player.c.best.gte(60)) text = text + "60 Coal Power Plants : Base Cost Exp 5.5 --> 6.25<br><br>"
+                    if(player.c.best.gte(70)) text = text + "70 Coal Power Plants : Base Cost Exp 6.25 --> 7<br><br>"
+                    if(player.c.best.gte(85)) text = text + "85 Coal Power Plants : Base Cost Exp 7 --> 8<br><br>"
+                    if(player.c.best.gte(100)) text = text + "100 Coal Power Plants : Base Cost Exp 8 --> 10.5<br><br>"
+                    return text
+                },]
+            ],
+            unlocked() { return player.c.best.gte(10) }
+        },
+    },
     name: "coal power plants", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "C", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 2, // Row the layer is in on the tree (0 is the first row)
@@ -1586,6 +1751,60 @@ addLayer("c", {
 	},
 })
 addLayer("n", {
+    tabFormat: {
+        "Main":{
+            content: [
+                "main-display",
+                "prestige-button"
+            ],
+        },
+        "Upgrades":{
+            content: [
+                "main-display",
+                "upgrades"
+            ],
+        },
+        "Milestones":{
+            content: [
+                "main-display",
+                "milestones"
+            ],
+            unlocked() { return hasMilestone("n", 0) }
+        },
+        "Buyables":{
+            content: [
+                "main-display",
+                "buyables"
+            ],
+            unlocked() { return tmp.n.buyables[11].unlocked }
+        },
+        "Challenges":{
+            content: [
+                "main-display",
+                "challenges"
+            ],
+            unlocked() { return tmp.n.challenges[11].unlocked }
+        },
+        "Softcaps":{
+            content: [
+                "main-display",
+                ["display-text", function() { 
+                    let text = ""
+                    if(player.n.best.gte(5)) text = text + "5 Nuclear Power Plants : Base Cost Exp 5 --> 5.5<br><br>"
+                    if(player.n.best.gte(10)) text = text + "10 Nuclear Power Plants : Base Cost Exp 5.5 --> 6<br><br>"
+                    if(player.n.best.gte(11)) text = text + "11 Nuclear Power Plants : Base Cost Exp 6 --> 8.5<br><br>"
+                    if(player.n.best.gte(15)) text = text + "15 Nuclear Power Plants : Base Cost Exp 8.5 --> 9.25<br><br>"
+                    if(player.n.best.gte(20)) text = text + "20 Nuclear Power Plants : Base Cost Exp 9.25 --> 10<br><br>"
+                    if(player.n.best.gte(25)) text = text + "25 Nuclear Power Plants : Base Cost Exp 10 --> 10.75<br><br>"
+                    if(player.n.best.gte(30)) text = text + "30 Nuclear Power Plants : Base Cost Exp 10.75 --> 11.5<br><br>"
+                    if(player.n.best.gte(40)) text = text + "40 Nuclear Power Plants : Base Cost Exp 11.5 --> 12.5<br><br>"
+                    if(player.n.best.gte(50)) text = text + "50 Nuclear Power Plants : Base Cost Exp 12.5 --> 14<br><br>"
+                    return text
+                },]
+            ],
+            unlocked() { return player.n.best.gte(5) }
+        },
+    },
     name: "nuclear power plants", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "N", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 2, // Row the layer is in on the tree (0 is the first row)
@@ -1751,7 +1970,7 @@ addLayer("n", {
                 return player.n.points.gte(new Decimal(5).add(getBuyableAmount("n", 11).pow(1.25)).minus(getBuyableAmount("n", 11)).minus(tmp.n.buyables[22].effect).floor()) 
             },
             buy() { 
-                player.n.points = player.n.points.minus(new Decimal(5).add(getBuyableAmount("n", 11).pow(1.25)).minus(getBuyableAmount("n", 11)).minus(tmp.n.buyables[22].effect).floor())
+                player.n.points = player.n.points.minus(new Decimal(5).add(getBuyableAmount("n", 11).pow(1.25)).minus(getBuyableAmount("n", 11)).minus(tmp.n.buyables[22].effect).floor()).min(player.n.points)
                 setBuyableAmount("n", 11, getBuyableAmount("n", 11).add(1))
             },
             effect() { 
@@ -1775,7 +1994,7 @@ addLayer("n", {
                 return player.n.points.gte(new Decimal(10).add(getBuyableAmount("n", 12).pow(1.5)).minus(getBuyableAmount("n", 12)).minus(tmp.n.buyables[22].effect).floor()) 
             },
             buy() { 
-                player.n.points = player.n.points.minus(new Decimal(10).add(getBuyableAmount("n", 12).pow(1.5)).minus(getBuyableAmount("n", 12)).minus(tmp.n.buyables[22].effect).floor())
+                player.n.points = player.n.points.minus(new Decimal(10).add(getBuyableAmount("n", 12).pow(1.5)).minus(getBuyableAmount("n", 12)).minus(tmp.n.buyables[22].effect).floor()).min(player.n.points)
                 setBuyableAmount("n", 12, getBuyableAmount("n", 12).add(1))
             },
             effect() { 
@@ -1795,7 +2014,7 @@ addLayer("n", {
                 return player.n.points.gte(new Decimal(10).add(getBuyableAmount("n", 13).pow(1.75)).minus(getBuyableAmount("n", 13)).minus(tmp.n.buyables[22].effect).floor()) 
             },
             buy() { 
-                player.n.points = player.n.points.minus(new Decimal(10).add(getBuyableAmount("n", 13).pow(1.75)).minus(getBuyableAmount("n", 13)).minus(tmp.n.buyables[22].effect).floor())
+                player.n.points = player.n.points.minus(new Decimal(10).add(getBuyableAmount("n", 13).pow(1.75)).minus(getBuyableAmount("n", 13)).minus(tmp.n.buyables[22].effect).floor()).min(player.n.points)
                 setBuyableAmount("n", 13, getBuyableAmount("n", 13).add(1))
             },
             effect() { 
@@ -1815,7 +2034,7 @@ addLayer("n", {
                 return player.n.points.gte(new Decimal(10).add(getBuyableAmount("n", 21).pow(2.5)).minus(getBuyableAmount("n", 21)).minus(tmp.n.buyables[22].effect).floor()) 
             },
             buy() { 
-                player.n.points = player.n.points.minus(new Decimal(10).add(getBuyableAmount("n", 21).pow(2.5)).minus(getBuyableAmount("n", 21)).minus(tmp.n.buyables[22].effect).floor())
+                player.n.points = player.n.points.minus(new Decimal(10).add(getBuyableAmount("n", 21).pow(2.5)).minus(getBuyableAmount("n", 21)).minus(tmp.n.buyables[22].effect).floor()).min(player.n.points)
                 setBuyableAmount("n", 21, getBuyableAmount("n", 21).add(1))
             },
             effect() { 
@@ -1828,14 +2047,14 @@ addLayer("n", {
         22: {
             title: "Californium-243",
             display() {
-                return "Reduce all previous buyables' costs " + (tmp.n.buyables[22].effect.gte(1) ? "and divide nuclear power plant base ":"") +"by " + format(tmp.n.buyables[22].effect) + "<br>Cost : " + format(new Decimal(25).add(getBuyableAmount("n", 22).pow(1.25)).floor()) + " nuclear power plants"
+                return "Reduce all previous buyables' costs " + (tmp.n.buyables[22].effect.gte(1) ? "and divide nuclear power plant base ":"") +"by " + format(tmp.n.buyables[22].effect) + "<br>Cost : " + format(new Decimal(25).add(getBuyableAmount("n", 22).pow(1.25)).minus(hasUpgrade("com", 21) ? new Decimal(25):new Decimal(0)).floor()) + " nuclear power plants"
             },
             unlocked() { return hasUpgrade("n", 23) },
             canAfford() { 
-                return player.n.points.gte(new Decimal(25).add(getBuyableAmount("n", 22).pow(1.25)).floor()) 
+                return player.n.points.gte(new Decimal(25).add(getBuyableAmount("n", 22).pow(1.25)).minus(hasUpgrade("com", 21) ? new Decimal(25):new Decimal(0)).floor()) 
             },
             buy() { 
-                player.n.points = player.n.points.minus(new Decimal(25).add(getBuyableAmount("n", 22).pow(1.25)).floor())
+                player.n.points = player.n.points.minus(new Decimal(25).add(getBuyableAmount("n", 22).pow(1.25)).minus(hasUpgrade("com", 21) ? new Decimal(25):new Decimal(0)).floor()).min(player.n.points)
                 setBuyableAmount("n", 22, getBuyableAmount("n", 22).add(1))
             },
             effect() { 
@@ -1897,6 +2116,41 @@ addLayer("n", {
 	},
 })
 addLayer("s", {
+    tabFormat: {
+        "Main":{
+            content: [
+                "main-display",
+                "prestige-button"
+            ],
+        },
+        "Upgrades":{
+            content: [
+                "main-display",
+                "upgrades"
+            ],
+        },
+        "Milestones":{
+            content: [
+                "main-display",
+                "milestones"
+            ],
+            unlocked() { return hasMilestone("s", 0) }
+        },
+        "Buyables":{
+            content: [
+                "main-display",
+                "buyables"
+            ],
+            unlocked() { return tmp.s.buyables[11].unlocked }
+        },
+        "Challenges":{
+            content: [
+                "main-display",
+                "challenges"
+            ],
+            unlocked() { return tmp.s.challenges[11].unlocked }
+        },
+    },
     name: "solar power plants", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 2, // Row the layer is in on the tree (0 is the first row)
@@ -1928,7 +2182,11 @@ addLayer("s", {
         if(hasUpgrade("m", 64)) exp = exp.minus(0.005)
         return exp
     },
-	base() {return new Decimal(1.1)},
+	base() {
+        base = new Decimal(1.1)
+        if(hasUpgrade("cb", 25)) base = base.pow(0.6)
+        return base
+    },
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if(hasUpgrade("s", 11)) {mult = mult.div(1.5)}
@@ -2090,6 +2348,34 @@ addLayer("s", {
 	},
 })
 addLayer("sh", {
+    tabFormat: {
+        "Main":{
+            content: [
+                "main-display",
+                "prestige-button"
+            ],
+        },
+        "Upgrades":{
+            content: [
+                "main-display",
+                "upgrades"
+            ],
+        },
+        "Milestones":{
+            content: [
+                "main-display",
+                "milestones"
+            ],
+            unlocked() { return hasMilestone("sh", 0) }
+        },
+        "Challenges":{
+            content: [
+                "main-display",
+                "challenges"
+            ],
+            unlocked() { return tmp.sh.challenges[11].unlocked }
+        },
+    },
     name: "shares", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "SH", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 3, // Row the layer is in on the tree (0 is the first row)
@@ -2116,6 +2402,7 @@ addLayer("sh", {
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() { // Prestige currency exponent
         exp = new Decimal(25)
+        if(hasUpgrade("cb", 24)) exp = exp.times(100)
         return exp
     },
     gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -2134,6 +2421,7 @@ addLayer("sh", {
         if(hasUpgrade("cap", 11)) mult = mult.times(tmp.cap.upgrades[11].effect)
         if(hasUpgrade("cb", 23)) mult = mult.times(tmp.cb.upgrades[23].effect)
         if(hasChallenge("sh", 22)) mult = mult.times(tmp.sh.challenges[22].rewardEffect)
+        if(hasChallenge("sh", 31)) mult = mult.times(tmp.sh.challenges[31].rewardEffect)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -2311,6 +2599,20 @@ addLayer("sh", {
 			unlocked() { return hasChallenge("sh", 21) || inChallenge("sh", 22) || hasChallenge("sh", 22) },
 			canComplete() { return player.points.gte("e1510000000")},
 		},
+        31: {
+			name: "Heartless",
+			challengeDescription: "Reset all progress on rows 1-3 and corrupt politicians and governments ( Also Resets When Completing The Challenge )<br>Satan's Masterpiece completions will remain because I'm not THAT heartless",
+			goalDescription: "e3e12 Money",
+			rewardDescription() {return hasChallenge("sh", 31) ? "Boost share gain based on money":"Unknown"},
+            rewardEffect() { 
+                eff = new Decimal(1000).pow(player.m.points.add(1).log10().add(1).log10())
+                if(eff.gte("1e1000")) eff = eff.log10().pow(1000/3)
+                return eff.max(1)
+            },
+            rewardDisplay() { return hasChallenge("sh", 31) ? "*" + format(tmp.sh.challenges[31].rewardEffect) + " to share gain":"Unknown" },
+			unlocked() { return player.m.best.gte("e3e12") || inChallenge("sh", 31) || hasChallenge("sh", 31) },
+			canComplete() { return player.m.points.gte("e3e12")},
+		},
 	},
 	milestones: {
 		0: {
@@ -2346,6 +2648,27 @@ addLayer("sh", {
 	},
 })
 addLayer("com", {
+    tabFormat: {
+        "Main":{
+            content: [
+                "main-display",
+                "prestige-button"
+            ],
+        },
+        "Upgrades":{
+            content: [
+                "main-display",
+                "upgrades"
+            ],
+        },
+        "Milestones":{
+            content: [
+                "main-display",
+                "milestones"
+            ],
+            unlocked() { return hasMilestone("com", 0) }
+        },
+    },
     name: "communists", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "COM", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 4, // Row the layer is in on the tree (0 is the first row)
@@ -2355,7 +2678,7 @@ addLayer("com", {
     hotkeys: [
         {key: "L", description: "Press SHIFT+L to Communist Reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){return hasUpgrade("sh", 24) || player.com.unlocked},
+    layerShown(){return hasUpgrade("sh", 24) || player.com.unlocked },
     startData() { return {
         unlocked: false,
         points: new Decimal(0),
@@ -2376,6 +2699,7 @@ addLayer("com", {
     },
     base() {
         base = new Decimal("1e100")
+        if(hasUpgrade("g", 33)) base = base.pow(0.9)
         return base
     },
     gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -2410,7 +2734,7 @@ addLayer("com", {
             unlocked() { return player.com.unlocked || hasUpgrade("com", 11) },
             effect() {
                 eff = new Decimal(player.w.points.add(1).log10())
-                return eff
+                return eff.max(1)
             },
             effectDisplay() { return "*" + format(tmp.com.upgrades[11].effect) + " to share gain"}
 		},
@@ -2469,6 +2793,27 @@ addLayer("com", {
     },
 })
 addLayer("cap", {
+    tabFormat: {
+        "Main":{
+            content: [
+                "main-display",
+                "prestige-button"
+            ],
+        },
+        "Upgrades":{
+            content: [
+                "main-display",
+                "upgrades"
+            ],
+        },
+        "Milestones":{
+            content: [
+                "main-display",
+                "milestones"
+            ],
+            unlocked() { return hasMilestone("cap", 0) }
+        },
+    },
     name: "capitalists", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "CAP", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 4, // Row the layer is in on the tree (0 is the first row)
@@ -2499,6 +2844,7 @@ addLayer("cap", {
     },
     base() {
         base = new Decimal("1e100")
+        if(hasUpgrade("g", 33)) base = base.pow(0.9)
         return base
     },
     gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -2594,11 +2940,44 @@ addLayer("cap", {
     },
 })
 addLayer("cb", {
+    tabFormat: {
+        "Main":{
+            content: [
+                "main-display",
+                "prestige-button"
+            ],
+        },
+        "Upgrades":{
+            content: [
+                "main-display",
+                "upgrades"
+            ],
+        },
+        "Milestones":{
+            content: [
+                "main-display",
+                "milestones"
+            ],
+            unlocked() { return hasMilestone("cb", 0) }
+        },
+        "Softcaps":{
+            content: [
+                "main-display",
+                ["display-text", function() { 
+                    let text = ""
+                    if(player.cb.best.gte(10)) text = text + "10 Corrupt Boosts : Base Cost Exp 1.25 --> 1.5<br><br>"
+                    if(player.cb.best.gte(25)) text = text + "25 Corrupt Boosts : Base Cost Exp 1.5 --> 2<br><br>"
+                    return text
+                },]
+            ],
+            unlocked() { return player.cb.best.gte(10) }
+        },
+    },
     name: "corrupt boosts", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "CB", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: 5, // Row the layer is in on the tree (0 is the first row)
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
-    color: "#459ec4",
+    color: "#3836b6",
 	branches: ["com", "cap"],
     hotkeys: [
         {key: "B", description: "Press SHIFT+B to Corrupt Boost Reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
@@ -2633,6 +3012,7 @@ addLayer("cb", {
         mult = new Decimal(1)
         if(hasUpgrade("cb", 14)) mult = mult.times(0.95)
         if(hasUpgrade("g", 32)) mult = mult.div(tmp.g.upgrades[32].effect)
+        if(hasUpgrade("g", 34)) mult = mult.times(0.99)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -2655,7 +3035,7 @@ addLayer("cb", {
 	effectDescription() {
         return ("Which Are Raising Corrupt Goverment Gain And Their Effect To The " + format(tmp.cb.effect) + "th Power<br><br><br>You have " + format(player.cb.power) + " Corrupt Power, Making Corrupt Boosts " + format(tmp.cb.powerEffect) + "x More Efficient")
 	},
-    passiveGeneration() { return false },
+    resetsNothing() { return hasMilestone("cb", 3) },
     doReset(resettingLayer){
         let keep = []
         if (layers[resettingLayer].row > this.row) layerDataReset(this.layer, keep)
@@ -2734,6 +3114,18 @@ addLayer("cb", {
             },
             effectDisplay() { return "*" + format(tmp.cb.upgrades[23].effect) + " share gain"}
 		},
+        24:{
+            title: "I uhhh... whatever, this is an upgrade",
+            description: "Centuple the share gain exponent",
+            cost() { return new Decimal(20) },
+            unlocked() { return hasUpgrade("g", 34) || hasUpgrade("cb", 24) },
+		},
+        25:{
+            title: "This isn't a placeholder anymore ?<br>Well, I don't care",
+            description: "Battery base is 99.9% weaker and solar power plant base is 40% weaker",
+            cost() { return new Decimal(25) },
+            unlocked() { return hasUpgrade("g", 34) || hasUpgrade("cb", 25) },
+		},
     },
     milestones: {
 		0: {
@@ -2751,6 +3143,11 @@ addLayer("cb", {
 			done() { return player.cb.best.gte(4) },
 			effectDescription: "Row 5 layers reset nothing",
 		},
+        3: {
+			requirementDescription: "20 Corrupt Boosts",
+			done() { return player.cb.best.gte(20) },
+			effectDescription: "Corrupt boosts reset nothing",
+		},
     },
     update(diff) {
         if(hasUpgrade("cb", 11)) {
@@ -2762,12 +3159,21 @@ addLayer("cb", {
     },
 })
 addLayer("p", {
-    tabFormat: [
-        "main-display",
-        "milestones",
-        "buyables",
-        "upgrades",
-    ],
+    tabFormat: {
+        "Upgrades":{
+            content: [
+                "main-display",
+                "upgrades"
+            ],
+        },
+        "Buyables":{
+            content: [
+                "main-display",
+                "buyables"
+            ],
+            unlocked() { return tmp.p.buyables[11].unlocked }
+        },
+    },
     name: "corrupt politicians", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "P", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: "side", // Row the layer is in on the tree (0 is the first row)
@@ -2853,10 +3259,10 @@ addLayer("p", {
         if(eff.gte(10) && !hasUpgrade("p", 44)) {
             eff = eff.log10().minus(new Decimal(10).log10()).add(1).pow(0.1).add(9)
         }
-        if(eff.gte(15)) {
+        if(eff.gte(15) && !hasUpgrade("p", 45)) {
             eff = eff.log10().minus(new Decimal(15).log10()).add(1).pow(0.85).add(14)
         }
-        if(eff.gte(20)) {
+        if(eff.gte(20) && !hasUpgrade("p", 51)) {
             eff = eff.minus(19).pow(0.1).add(19)
         }
         if(eff.gte(25)) {
@@ -2864,6 +3270,12 @@ addLayer("p", {
         }
         if(eff.gte(30)) {
             eff = eff.minus(29).pow(0.000001).add(29)
+        }
+        if(eff.gte(50)) {
+            eff = eff.minus(49).pow(1/3).add(49)
+        }
+        if(eff.gte(250)) {
+            eff = eff.minus(249).pow(0.5).add(249)
         }
         return eff
 	},
@@ -2976,7 +3388,7 @@ addLayer("p", {
             unlocked() { return hasUpgrade("i", 43) || hasUpgrade("p", 34) },
             effect() {
                 eff = new Decimal(player.p.points.pow(1/3))
-                return eff
+                return eff.max(1)
             },
             effectDisplay() {return "*"+format(tmp.p.upgrades[34].effect)+" to corrupt politician gain"},
         },
@@ -2999,7 +3411,7 @@ addLayer("p", {
             unlocked() { return hasUpgrade("m", 74) || hasUpgrade("p", 42) },
             effect() {
                 eff = new Decimal(player.p.points.pow(1958))
-                return eff
+                return eff.max(1)
             },
             effectDisplay() {return "*"+format(tmp.p.upgrades[42].effect)+" to electricity gain"},
         },
@@ -3025,6 +3437,12 @@ addLayer("p", {
                 return new Decimal("1e75000") 
             },
             unlocked() { return hasUpgrade("cap", 14) || hasUpgrade("p", 44) },
+        },
+        45: {
+            title: "GET RID OF THEM",
+            description: "Remove the 6th softcap on the corrupt politician effect and make the 17th inflation upgrade better",
+            cost() { return new Decimal("1e230000") },
+            unlocked() { return hasUpgrade("g", 32) || hasUpgrade("p", 45) },
         },
     },
     buyables: {
@@ -3109,11 +3527,14 @@ addLayer("p", {
     },
 })
 addLayer("g", {
-    tabFormat: [
-        "main-display",
-        "milestones",
-        "upgrades",
-    ],
+    tabFormat: {
+        "Upgrades":{
+            content: [
+                "main-display",
+                "upgrades"
+            ],
+        },
+    },
     name: "corrupt governments", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "G", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: "side", // Row the layer is in on the tree (0 is the first row)
@@ -3288,19 +3709,34 @@ addLayer("g", {
             effectDisplay() { return format(new Decimal(100).minus(new Decimal(100).div(tmp.g.upgrades[32].effect))) + "% cheaper corrupt boosts" },
         },
         33: {
+            title: "Really ?",
+            description: "Capitalists and communists bases are 10% weaker",
+            cost() { return new Decimal("1e2600") },
+            unlocked() { return player.cb.best.gte(16) || hasUpgrade("g", 33) },
+        },
+        34: {
+            title: "I Just Don't Care Anymore",
+            description: "Unlock new corrupt boost upgrades and corrupt boosts are 1% cheaper",
+            cost() { return new Decimal("1e2600") },
+            unlocked() { return player.cb.best.gte(19) || hasUpgrade("g", 34) },
+        },
+        35: {
             title: "Corrupt Hell",
             description: "Corrupt politicians and governments start producing corruption",
             cost() { return new Decimal("1e6666") },
-            unlocked() { return player.com.unlocked || player.cap.unlocked || hasUpgrade("g", 33) },
+            unlocked() { return player.com.unlocked || player.cap.unlocked || hasUpgrade("g", 35) },
         },
     },
 })
 addLayer("i", {
-    tabFormat: [
-        "main-display",
-        "milestones",
-        "upgrades",
-    ],
+    tabFormat: {
+        "Upgrades":{
+            content: [
+                "main-display",
+                "upgrades"
+            ],
+        },
+    },
     name: "inflation", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "I", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: "side", // Row the layer is in on the tree (0 is the first row)
@@ -3405,7 +3841,7 @@ addLayer("i", {
             effect() {
                 eff = new Decimal(player.p.points.div(100).add(1).log10().pow(5))
                 if(hasUpgrade("i", 21)) eff = eff.times(tmp.i.upgrades[21].effect)
-				return eff
+				return eff.max(1)
             },
             effectDisplay() { return "*"+format(tmp.i.upgrades[13].effect) + " to corrupt government gain" },
         },
@@ -3534,11 +3970,12 @@ addLayer("i", {
         },
         42: {
             title: "Another Boost ?",
-            description: "Inflation boosts corrupt politician and corrupt government gain",
+            description() {return (hasUpgrade("p", 45) ? "Inflation boosts":"Boost") + " corrupt politician and corrupt government gain"},
             cost() { return new Decimal("10").tetrate(3000) },
             unlocked() { return player.i.layer > 2200 || hasUpgrade("i", 42) },
-            effect() { 
-                eff = new Decimal(player.i.points.layer).add(1).pow(0.25)
+            effect() {
+                eff = new Decimal(2).pow(0.5)
+                if(hasUpgrade("p", 45)) eff = new Decimal(player.i.layer).pow(0.025).max(eff)
                 if(eff.gte(1.75)) eff = new Decimal(1.75)
 				return eff
             },
@@ -3552,7 +3989,7 @@ addLayer("i", {
         },
         44: {
             title: "Another Self-Boost I Guess",
-            description: "Inflation boosts it's generation speed",
+            description: "Inflation boosts its generation speed",
             cost() { return new Decimal("10").tetrate(25000) },
             unlocked() { return player.i.layer > 15000 || hasUpgrade("i", 44) },
             effect() { 
@@ -3589,9 +4026,13 @@ addLayer("i", {
     },
 })
 addLayer("bm", {
-    tabFormat: [
-        "clickables",
-    ],
+    tabFormat: {
+        "Main":{
+            content: [
+                "clickables"
+            ],
+        },
+    },
     symbol: "BM", // This appears on the layer's node. Default is the id with the first letter capitalized
     row: "side", // Row the layer is in on the tree (0 is the first row)
     position: -1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order

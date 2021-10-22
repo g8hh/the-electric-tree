@@ -1,5 +1,5 @@
 let modInfo = {
-	name: "The Electric Tree",
+	name: "电力树 - The Electric Tree",
 	id: "TETBB",
 	author: "mathnerdfromfrance",
 	pointsName: "KWh",

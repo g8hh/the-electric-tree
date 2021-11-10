@@ -40,8 +40,8 @@ let changelog = `<h1>Changelog:</h1><br>
 	<br><h3>v0.2 : Storing Electricity ( April 1st )</h3><br>
 	<br><h3>v0.1 : The Begenning ( March 31st )</h3><br>`
 
-let winText = `Congratulations! That amount of electricity just broke the universe!<br>
-              Unfortunately, this is the end of the game...for now`
+let winText = `恭喜！ 这么大的电量，简直是炸裂了宇宙！<br>
+              不幸的是，这是游戏的结束......针对现在`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
